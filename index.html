@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dear Days 🎀</title>
+<meta name="theme-color" content="#e05572">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dear Days">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chewy&family=Mali:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+<div class="fluff f1"></div><div class="fluff f2"></div><div class="fluff f3"></div>
+
+<div class="app">
+  <header>
+    <div class="title-wrap">
+      <h1>🎀 Dear Days</h1>
+      <div class="subtitle">a soft little keeper of your moments</div>
+    </div>
+    <div class="header-right">
+      <span class="sync-pill" id="syncPill">on device</span>
+      <button class="icon-btn" id="settingsBtn" title="cloud backup & settings">☁️</button>
+    </div>
+  </header>
+
+  <div class="companion-card">
+    <div class="bunny-stage"><div class="bunny-bob" id="bunnyHolder"></div></div>
+    <div class="companion-info">
+      <div class="companion-name" id="companionName" title="click to rename">Mochi</div>
+      <div class="companion-stage-label" id="stageLabel">tiny bun</div>
+      <div class="speech" id="speech">hi hi!! i missed you 🤍</div>
+      <div class="care-hearts">love <span class="bar"><i id="careBar"></i></span></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tabCal">🗓️ calendar</button>
+    <button class="tab" id="tabGarden">🌷 memory garden</button>
+  </div>
+
+  <div class="today-card">
+    <h2 id="greeting" title="click to change your name">hello, lovely</h2>
+    <div class="today-date" id="todayDateLine"></div>
+    <div class="onthisday" id="onThisDay"></div>
+    <div class="today-events" id="todayEvents"></div>
+    <div class="mood-quick">
+      <span class="label">how is your heart today?</span>
+      <span id="quickMoods"></span>
+    </div>
+  </div>
+
+  <div class="panel" id="calPanel">
+    <div class="cal-head">
+      <button class="nav-btn" id="prevBtn">‹</button>
+      <h3 id="monthTitle"></h3>
+      <button class="nav-btn" id="nextBtn">›</button>
+      <button class="nav-btn today-jump" id="todayBtn">today 🤍</button>
+    </div>
+    <div class="weekdays"><div>sun</div><div>mon</div><div>tue</div><div>wed</div><div>thu</div><div>fri</div><div>sat</div></div>
+    <div class="grid" id="calGrid"></div>
+    <div class="legend"><span>🎀 special day</span><span>💌 plan</span><span>📖 diary</span><span>🎙️ voice</span><span>● mood</span></div>
+  </div>
+
+  <div class="panel" id="gardenPanel" style="display:none">
+    <div class="garden-intro">every special day you plant grows here, like pressed flowers in a book. 🌱 starts · 🍂 endings · 🎀 anniversaries · ✨ little moments</div>
+    <div class="garden-grid" id="gardenGrid"></div>
+    <div class="garden-empty" id="gardenEmpty" style="display:none">
+      <span class="big">🌷</span>nothing planted yet… open any day on the calendar and plant a special day 🤍
+    </div>
+  </div>
+</div>
+
+<!-- day modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="bow-top">🎀</div>
+    <button class="close-x" id="closeModalBtn">✕</button>
+    <h3 id="modalTitle"></h3>
+    <div class="sub" id="modalSub"></div>
+
+    <div class="section">
+      <div class="section-label">🌸 mood of the day</div>
+      <div class="mood-row" id="modalMoods"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">📖 dear diary…</div>
+      <textarea id="noteBox" placeholder="what happened? how did it feel? this page is only yours…"></textarea>
+      <div class="save-note-row"><button class="btn" id="saveNoteBtn">keep this page 🤍</button></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">🎙️ voice notes</div>
+      <div class="item-list" id="voiceList"></div>
+      <button class="btn ghost" id="recBtn">🎙️ hold your thought — tap to record</button>
+      <div class="hint" id="recHint" style="display:none">recording… tap again to keep it 🤍</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">🎀 special days on this date</div>
+      <div class="item-list" id="memList"></div>
+      <input type="text" id="memTitle" placeholder="what happened? (e.g. first day at the new job)">
+      <div class="row">
+        <select id="memKind" class="narrow">
+          <option value="start">🌱 a start</option>
+          <option value="end">🍂 an ending</option>
+          <option value="anniversary">🎀 anniversary</option>
+          <option value="moment">✨ a moment</option>
+        </select>
+        <button class="btn" id="addMemBtn">plant it 🌷</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">💌 plans on this day</div>
+      <div class="item-list" id="evList"></div>
+      <input type="text" id="evTitle" placeholder="something coming up? (e.g. tea with Ana)">
+      <div class="row">
+        <input type="time" id="evTime" class="narrow">
+        <button class="btn" id="addEvBtn">tuck it in 💌</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- settings / cloud modal -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal">
+    <div class="bow-top">☁️</div>
+    <button class="close-x" id="closeSettingsBtn">✕</button>
+    <h3>cloud backup</h3>
+    <div class="sub" id="cloudStatusLine">everything currently lives safely on this device</div>
+    <div class="section" id="signinSection">
+      <div class="section-label">💌 sign in with your email</div>
+      <input type="email" id="emailBox" placeholder="you@example.com">
+      <div class="row"><button class="btn" id="signInBtn">send me a magic link ✨</button></div>
+      <div class="hint">no passwords — a sign-in link arrives in your email. once signed in, your diary, moods, memories and voice notes back up to your private cloud and sync to any device.</div>
+    </div>
+    <div class="section" id="signedinSection" style="display:none">
+      <div class="hint" id="whoLine"></div>
+      <div class="row">
+        <button class="btn ghost" id="syncNowBtn">sync now ☁️</button>
+        <button class="btn ghost" id="signOutBtn">sign out 🍃</button>
+      </div>
+    </div>
+    <div class="section" id="notConfiguredSection" style="display:none">
+      <div class="hint">cloud backup isn't set up yet — the Supabase keys in <b>config.js</b> are empty. your memories are still saved on this device. 🤍</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="storage.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
