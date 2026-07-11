@@ -1,166 +1,565 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dear Days 🎀</title>
-<meta name="theme-color" content="#e05572">
+<meta name="theme-color" content="#D9435F">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Dear Days">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Chewy&family=Mali:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="config.js"></script>
+<script>
+/* serve the design runtime's CDN dependencies from local copies (offline/PWA) */
+window.__resources = {
+  "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "./vendor/react.min.js",
+  "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js": "./vendor/react-dom.min.js",
+  "https://unpkg.com/@babel/standalone@7.29.0/babel.min.js": "./vendor/babel.min.js"
+};
+</script>
+<script src="./vendor/supabase.min.js"></script>
+<script src="./config.js"></script>
+<script src="./support.js"></script>
 </head>
 <body>
-<div class="fluff f1"></div><div class="fluff f2"></div><div class="fluff f3"></div>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#C9758E}
+body{display:flex;justify-content:center;font-family:'Mali',sans-serif}
+a{color:#8C2E44}a:hover{color:#D9435F}
+textarea{outline:none}
+@keyframes dd-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes dd-spark{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+@keyframes dd-toast{0%{opacity:0;transform:translateY(14px) scale(.94)}100%{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes dd-pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+</style>
+</helmet>
 
-<div class="app">
-  <header>
-    <div class="title-wrap">
-      <h1>🎀 Dear Days</h1>
-      <div class="subtitle">a soft little keeper of your moments</div>
-    </div>
-    <div class="header-right">
-      <span class="sync-pill" id="syncPill">on device</span>
-      <button class="icon-btn" id="settingsBtn" title="cloud backup & settings">☁️</button>
-    </div>
-  </header>
+<div data-screen-label="dear days app" style="position:relative;width:min(100vw,430px);min-height:100dvh;background:#D98BA3;overflow:hidden;display:flex;flex-direction:column">
+  <div style="position:absolute;top:-50px;right:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,248,245,.13);pointer-events:none"></div>
+  <div style="position:absolute;bottom:140px;left:-80px;width:210px;height:210px;border-radius:50%;background:rgba(255,248,245,.09);pointer-events:none"></div>
 
-  <div class="companion-card">
-    <div class="bunny-stage"><div class="bunny-bob" id="bunnyHolder"></div></div>
-    <div class="companion-info">
-      <div class="companion-name" id="companionName" title="click to rename">Mochi</div>
-      <div class="companion-stage-label" id="stageLabel">tiny bun</div>
-      <div class="speech" id="speech">hi hi!! i missed you 🤍</div>
-      <div class="care-hearts">love <span class="bar"><i id="careBar"></i></span></div>
-    </div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab active" id="tabCal">🗓️ calendar</button>
-    <button class="tab" id="tabGarden">🌷 memory garden</button>
-  </div>
-
-  <div class="today-card">
-    <h2 id="greeting" title="click to change your name">hello, lovely</h2>
-    <div class="today-date" id="todayDateLine"></div>
-    <div class="onthisday" id="onThisDay"></div>
-    <div class="today-events" id="todayEvents"></div>
-    <div class="mood-quick">
-      <span class="label">how is your heart today?</span>
-      <span id="quickMoods"></span>
-    </div>
-  </div>
-
-  <div class="panel" id="calPanel">
-    <div class="cal-head">
-      <button class="nav-btn" id="prevBtn">‹</button>
-      <h3 id="monthTitle"></h3>
-      <button class="nav-btn" id="nextBtn">›</button>
-      <button class="nav-btn today-jump" id="todayBtn">today 🤍</button>
-    </div>
-    <div class="weekdays"><div>sun</div><div>mon</div><div>tue</div><div>wed</div><div>thu</div><div>fri</div><div>sat</div></div>
-    <div class="grid" id="calGrid"></div>
-    <div class="legend"><span>🎀 special day</span><span>💌 plan</span><span>📖 diary</span><span>🎙️ voice</span><span>● mood</span></div>
-  </div>
-
-  <div class="panel" id="gardenPanel" style="display:none">
-    <div class="garden-intro">every special day you plant grows here, like pressed flowers in a book. 🌱 starts · 🍂 endings · 🎀 anniversaries · ✨ little moments</div>
-    <div class="garden-grid" id="gardenGrid"></div>
-    <div class="garden-empty" id="gardenEmpty" style="display:none">
-      <span class="big">🌷</span>nothing planted yet… open any day on the calendar and plant a special day 🤍
-    </div>
-  </div>
-</div>
-
-<!-- day modal -->
-<div class="overlay" id="overlay">
-  <div class="modal">
-    <div class="bow-top">🎀</div>
-    <button class="close-x" id="closeModalBtn">✕</button>
-    <h3 id="modalTitle"></h3>
-    <div class="sub" id="modalSub"></div>
-
-    <div class="section">
-      <div class="section-label">🌸 mood of the day</div>
-      <div class="mood-row" id="modalMoods"></div>
+  <!-- ══════════ TODAY ══════════ -->
+  <sc-if value="{{ tabToday }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="today" style="position:relative;padding:28px 20px 130px;display:flex;flex-direction:column;gap:14px">
+    <div>
+      <div style="font-family:'Lilita One',cursive;font-size:30px;color:#FFF8F5;text-shadow:0 2px 0 rgba(140,46,68,.35)">{{ greeting }}</div>
+      <div style="font-size:15px;color:#FBE3E9;margin-top:2px">{{ dateLine }}</div>
     </div>
 
-    <div class="section">
-      <div class="section-label">📖 dear diary…</div>
-      <textarea id="noteBox" placeholder="what happened? how did it feel? this page is only yours…"></textarea>
-      <div class="save-note-row"><button class="btn" id="saveNoteBtn">keep this page 🤍</button></div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">🎙️ voice notes</div>
-      <div class="item-list" id="voiceList"></div>
-      <button class="btn ghost" id="recBtn">🎙️ hold your thought — tap to record</button>
-      <div class="hint" id="recHint" style="display:none">recording… tap again to keep it 🤍</div>
-    </div>
-
-    <div class="section">
-      <div class="section-label">🎀 special days on this date</div>
-      <div class="item-list" id="memList"></div>
-      <input type="text" id="memTitle" placeholder="what happened? (e.g. first day at the new job)">
-      <div class="row">
-        <select id="memKind" class="narrow">
-          <option value="start">🌱 a start</option>
-          <option value="end">🍂 an ending</option>
-          <option value="anniversary">🎀 anniversary</option>
-          <option value="moment">✨ a moment</option>
-        </select>
-        <button class="btn" id="addMemBtn">plant it 🌷</button>
+    <!-- companion card -->
+    <div style="background:#FFF8F5;border-radius:26px;box-shadow:0 6px 0 rgba(140,46,68,.28);padding:16px 18px 14px;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.01);box-shadow:0 12px 0 rgba(140,46,68,.3)">
+      <div style="display:flex;align-items:center;gap:14px">
+        <div style="position:relative;width:124px;height:124px;flex:none;animation:dd-float 3.6s ease-in-out infinite">
+          <image-slot id="mochi" shape="circle" style="width:124px;height:124px" placeholder="drop a 3d mochi render here 🖤"></image-slot>
+          <div style="position:absolute;top:-10px;right:2px;width:38px;height:20px;transform:rotate(14deg);pointer-events:none">
+            <div style="position:absolute;left:0;top:3px;width:16px;height:13px;border-radius:60% 40% 55% 45%;background:linear-gradient(135deg,#E25672,#C33552);transform:rotate(-18deg)"></div>
+            <div style="position:absolute;right:0;top:3px;width:16px;height:13px;border-radius:40% 60% 45% 55%;background:linear-gradient(225deg,#E25672,#C33552);transform:rotate(18deg)"></div>
+            <div style="position:absolute;left:14px;top:5px;width:10px;height:10px;border-radius:40%;background:#A82743"></div>
+          </div>
+          <sc-if value="{{ sparkles }}" hint-placeholder-val="{{ true }}">
+            <div style="position:absolute;left:-8px;top:4px;font-size:13px;animation:dd-spark 2.4s ease-in-out infinite;pointer-events:none">✨</div>
+          </sc-if>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+          <div style="position:relative;background:#FBE3E9;border-radius:16px 16px 16px 4px;padding:9px 12px;font-size:13.5px;line-height:1.45;color:#6E3448">{{ bubble }}</div>
+          <div style="display:flex;align-items:baseline;gap:6px">
+            <span onClick="{{ renameCompanion }}" title="tap to rename" style="font-family:'Lilita One',cursive;font-size:17px;color:#6E3448;cursor:pointer;transition:transform .15s ease;display:inline-block" style-hover="transform:scale(1.08)">{{ catName }} ✎</span>
+            <span style="font-size:11px;color:#B07285">{{ stageLine }}</span>
+          </div>
+          <div style="height:14px;border-radius:99px;background:#F6D7DF;overflow:hidden;box-shadow:inset 0 2px 3px rgba(140,46,68,.18)">
+            <div style="width:{{ lovePct }};height:100%;border-radius:99px;background:linear-gradient(90deg,#F09CB4,#D9435F);transition:width .6s ease"></div>
+          </div>
+          <div style="font-size:10.5px;color:#B07285">{{ loveHint }}</div>
+        </div>
       </div>
     </div>
 
-    <div class="section">
-      <div class="section-label">💌 plans on this day</div>
-      <div class="item-list" id="evList"></div>
-      <input type="text" id="evTitle" placeholder="something coming up? (e.g. tea with Ana)">
-      <div class="row">
-        <input type="time" id="evTime" class="narrow">
-        <button class="btn" id="addEvBtn">tuck it in 💌</button>
+    <!-- on this day -->
+    <sc-if value="{{ hasOnThisDay }}" hint-placeholder-val="{{ true }}">
+    <div onClick="{{ openToday }}" style="background:#D9435F;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.35);padding:14px 18px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.02);box-shadow:0 12px 0 rgba(140,46,68,.38)">
+      <div style="font-size:26px">🎀</div>
+      <div>
+        <div style="font-family:'Lilita One',cursive;font-size:15px;color:#FFF8F5;letter-spacing:.3px">on this day</div>
+        <div style="font-size:14px;color:#FBE3E9;line-height:1.4">{{ onThisDay }}</div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- mood picker -->
+    <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.28);padding:14px 16px">
+      <div style="font-family:'Lilita One',cursive;font-size:17px;color:#6E3448;margin-bottom:10px">how is your heart today?</div>
+      <div style="display:flex;gap:8px;justify-content:space-between">
+        <sc-for list="{{ moods }}" as="m" hint-placeholder-count="5">
+          <div onClick="{{ m.pick }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer">
+            <div style="width:52px;height:52px;border-radius:50%;background:{{ m.bg }};box-shadow:{{ m.sh }};display:flex;align-items:center;justify-content:center;font-size:24px;transition:transform .15s ease" style-hover="transform:translateY(-5px) scale(1.14)">{{ m.emoji }}</div>
+            <div style="font-size:11px;color:#8C5A6C">{{ m.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+
+    <!-- write today's page -->
+    <div onClick="{{ openToday }}" style="background:#FFF8F5;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.28),inset 0 -4px 0 rgba(217,67,95,.12);padding:15px 0;text-align:center;font-family:'Lilita One',cursive;font-size:16px;color:#B93350;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.02);box-shadow:0 12px 0 rgba(140,46,68,.3),inset 0 -4px 0 rgba(217,67,95,.12)">write today's page 📖</div>
+
+    <!-- plans -->
+    <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.28);padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+      <div style="font-family:'Lilita One',cursive;font-size:17px;color:#6E3448">little plans</div>
+      <sc-for list="{{ plans }}" as="p" hint-placeholder-count="2">
+        <div style="display:flex;align-items:center;gap:10px;background:#FBE3E9;border-radius:14px;padding:9px 12px;transition:transform .15s ease" style-hover="transform:translateX(4px) scale(1.01)">
+          <span style="font-size:16px">💌</span>
+          <span style="flex:1;font-size:14px;color:#6E3448">{{ p.title }}</span>
+          <span style="font-size:12px;color:#B07285">{{ p.when }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noPlans }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px;color:#B07285;text-align:center;padding:6px 0">nothing planned — a soft, open day 🤍</div>
+      </sc-if>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ══════════ CALENDAR ══════════ -->
+  <sc-if value="{{ tabDays }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="calendar" style="position:relative;padding:28px 20px 130px;display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div onClick="{{ prevMonth }}" style="width:40px;height:40px;border-radius:50%;background:#FFF8F5;box-shadow:0 4px 0 rgba(140,46,68,.25);display:flex;align-items:center;justify-content:center;color:#6E3448;font-size:16px;cursor:pointer;transition:transform .15s ease" style-hover="transform:scale(1.15)">‹</div>
+      <div style="text-align:center">
+        <div style="font-family:'Lilita One',cursive;font-size:28px;color:#FFF8F5;text-shadow:0 2px 0 rgba(140,46,68,.35)">{{ monthLabel }} 🎀</div>
+        <div style="font-size:13px;color:#FBE3E9;margin-top:-2px">{{ yearLabel }}</div>
+      </div>
+      <div onClick="{{ nextMonth }}" style="width:40px;height:40px;border-radius:50%;background:#FFF8F5;box-shadow:0 4px 0 rgba(140,46,68,.25);display:flex;align-items:center;justify-content:center;color:#6E3448;font-size:16px;cursor:pointer;transition:transform .15s ease" style-hover="transform:scale(1.15)">›</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:0 2px">
+      <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7">
+        <div style="text-align:center;font-size:12px;font-weight:700;color:#FBE3E9">{{ w }}</div>
+      </sc-for>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:7px;padding:0 2px">
+      <sc-for list="{{ cal }}" as="c" hint-placeholder-count="35">
+        <sc-if value="{{ c.blank }}" hint-placeholder-val="{{ false }}"><div style="height:64px"></div></sc-if>
+        <sc-if value="{{ c.today }}" hint-placeholder-val="{{ false }}">
+          <div onClick="{{ c.open }}" style="position:relative;height:64px;background:#D9435F;border:2.5px solid #FFF8F5;border-radius:16px;box-shadow:0 5px 0 rgba(140,46,68,.4);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease" style-hover="transform:translateY(-5px) scale(1.08);box-shadow:0 11px 0 rgba(140,46,68,.42)">
+            <div style="position:absolute;top:-9px;right:-5px;font-size:14px">🎀</div>
+            <div style="font-weight:700;font-size:16px;color:#FFF8F5">{{ c.d }}</div>
+            <div style="font-size:8.5px;color:#FBE3E9;line-height:1">today</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ c.normal }}" hint-placeholder-val="{{ true }}">
+          <div onClick="{{ c.open }}" style="height:64px;background:#FFF8F5;border-radius:16px;box-shadow:0 4px 0 rgba(140,46,68,.22);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease" style-hover="transform:translateY(-5px) scale(1.08);box-shadow:0 10px 0 rgba(140,46,68,.28)">
+            <div style="font-weight:700;font-size:15px;color:#6E3448;line-height:1">{{ c.d }}</div>
+            <div style="display:flex;align-items:center;gap:2px;height:11px;font-size:9px;line-height:1">{{ c.mk }}<span style="width:6px;height:6px;border-radius:50%;background:{{ c.dot }}"></span></div>
+          </div>
+        </sc-if>
+      </sc-for>
+    </div>
+    <div style="background:rgba(255,248,245,.18);border-radius:16px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:12px;color:#FFF8F5">
+      <span>🎀 special day</span><span>💌 a plan</span><span>📖 a page</span><span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:#F09CB4;display:inline-block"></span>mood</span>
+    </div>
+    <div style="background:#FFF8F5;border-radius:20px;box-shadow:0 5px 0 rgba(140,46,68,.25);padding:12px 16px;display:flex;gap:10px;align-items:center">
+      <span style="font-size:20px">🌷</span>
+      <div style="font-size:13.5px;color:#6E3448;line-height:1.45">tap any little square to open its page — every day keeps its own memories 🤍</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ══════════ GARDEN ══════════ -->
+  <sc-if value="{{ tabGarden }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="memory garden" style="position:relative;padding:28px 20px 130px;display:flex;flex-direction:column;gap:13px">
+    <div>
+      <div style="font-family:'Lilita One',cursive;font-size:28px;color:#FFF8F5;text-shadow:0 2px 0 rgba(140,46,68,.35)">memory garden 🌷</div>
+      <div style="font-size:14px;color:#FBE3E9">every special day, pressed and kept</div>
+    </div>
+    <sc-for list="{{ memories }}" as="mem" hint-placeholder-count="4">
+      <div onClick="{{ mem.open }}" style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:15px 16px;display:flex;gap:13px;align-items:center;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.02);box-shadow:0 11px 0 rgba(140,46,68,.3)">
+        <div style="width:54px;height:54px;border-radius:18px;background:#FBE3E9;display:flex;align-items:center;justify-content:center;font-size:26px;flex:none">{{ mem.icon }}</div>
+        <div style="flex:1">
+          <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448">{{ mem.title }}</div>
+          <div style="font-size:12.5px;color:#B07285">{{ mem.dateLine }}</div>
+        </div>
+        <div style="padding:5px 10px;border-radius:99px;background:{{ mem.agoBg }};color:{{ mem.agoColor }};font-size:11.5px;flex:none">{{ mem.ago }}</div>
+      </div>
+    </sc-for>
+    <sc-if value="{{ noMemories }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;color:#FBE3E9;font-size:14px;padding:30px 0">no keepsakes yet — mark a special day and it will bloom here 🌱</div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <!-- ══════════ BOTTOM NAV ══════════ -->
+  <div style="position:fixed;left:50%;transform:translateX(-50%);bottom:16px;width:min(94vw,392px);background:#FFF8F5;border-radius:99px;box-shadow:0 6px 0 rgba(140,46,68,.3);display:flex;padding:6px;gap:4px;z-index:30">
+    <sc-for list="{{ navs }}" as="n" hint-placeholder-count="3">
+      <div onClick="{{ n.go }}" style="flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:{{ n.bg }};border-radius:99px;padding:10px 0;color:{{ n.color }};font-family:'Lilita One',cursive;font-size:14px;box-shadow:{{ n.sh }};cursor:pointer;transition:transform .15s ease" style-hover="transform:scale(1.06)">{{ n.icon }} {{ n.label }}</div>
+    </sc-for>
+  </div>
+
+  <!-- ══════════ DAY PAGE (sheet) ══════════ -->
+  <sc-if value="{{ dayOpen }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="day page" style="position:fixed;inset:0;background:rgba(110,52,72,.5);display:flex;align-items:flex-end;justify-content:center;z-index:50">
+    <div style="width:min(100vw,430px);max-height:90dvh;overflow:auto;background:#D98BA3;border-radius:28px 28px 0 0;padding:18px 20px 34px;display:flex;flex-direction:column;gap:12px;box-shadow:0 -8px 30px rgba(70,20,35,.35)">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div onClick="{{ closeDay }}" style="width:40px;height:40px;border-radius:50%;background:#FFF8F5;box-shadow:0 4px 0 rgba(140,46,68,.25);display:flex;align-items:center;justify-content:center;color:#6E3448;font-size:16px;cursor:pointer;flex:none;transition:transform .15s ease" style-hover="transform:scale(1.15)">‹</div>
+        <div>
+          <div style="font-family:'Lilita One',cursive;font-size:22px;color:#FFF8F5;text-shadow:0 2px 0 rgba(140,46,68,.35)">{{ dayTitle }}</div>
+          <sc-if value="{{ hasDaySub }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:12.5px;color:#FBE3E9">{{ daySub }}</div>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:12px 14px">
+        <div style="font-size:13px;color:#8C5A6C;margin-bottom:8px">mood of the day</div>
+        <div style="display:flex;gap:8px">
+          <sc-for list="{{ dayMoods }}" as="m" hint-placeholder-count="5">
+            <div onClick="{{ m.pick }}" style="width:46px;height:46px;border-radius:50%;background:{{ m.bg }};box-shadow:{{ m.sh }};display:flex;align-items:center;justify-content:center;font-size:22px;opacity:{{ m.op }};cursor:pointer;transition:transform .15s ease" style-hover="transform:translateY(-4px) scale(1.14)">{{ m.emoji }}</div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:14px 16px 16px">
+        <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448;margin-bottom:6px">dear diary…</div>
+        <textarea value="{{ dayNote }}" onChange="{{ onNoteChange }}" placeholder="today felt like…" style="width:100%;box-sizing:border-box;min-height:130px;border:none;resize:vertical;font-family:'Mali',sans-serif;font-size:14.5px;line-height:26px;color:#6E3448;background:repeating-linear-gradient(transparent 0 25px,rgba(217,67,95,.14) 25px 26px)"></textarea>
+      </div>
+
+      <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:14px 16px;display:flex;flex-direction:column;gap:9px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448">little voices</div>
+          <div onClick="{{ toggleRecord }}" style="min-width:44px;height:44px;padding:0 14px;border-radius:99px;background:{{ recBg }};box-shadow:0 4px 0 rgba(140,46,68,.35);display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;color:#FFF8F5;cursor:pointer;transition:transform .15s ease;animation:{{ recAnim }}" style-hover="transform:scale(1.1)">{{ recLabel }}</div>
+        </div>
+        <sc-for list="{{ dayVoices }}" as="v" hint-placeholder-count="1">
+          <div style="display:flex;align-items:center;gap:10px;background:#FBE3E9;border-radius:16px;padding:9px 12px;transition:transform .15s ease" style-hover="transform:translateX(4px)">
+            <div onClick="{{ v.play }}" style="width:34px;height:34px;border-radius:50%;background:#FFF8F5;box-shadow:0 3px 0 rgba(140,46,68,.2);display:flex;align-items:center;justify-content:center;color:#D9435F;font-size:13px;flex:none;cursor:pointer;transition:transform .15s ease" style-hover="transform:scale(1.2)">▶</div>
+            <div style="flex:1;height:20px;border-radius:6px;background:repeating-linear-gradient(90deg,#E58BA2 0 3px,transparent 3px 7px)"></div>
+            <div style="font-size:12px;color:#B07285;flex:none">{{ v.durLabel }}</div>
+          </div>
+        </sc-for>
+        <sc-if value="{{ noVoices }}" hint-placeholder-val="{{ true }}">
+          <div style="font-size:12.5px;color:#B07285;text-align:center;padding:2px 0">no little voices on this day yet 🤍</div>
+        </sc-if>
+      </div>
+
+      <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:14px 16px">
+        <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448;margin-bottom:9px">mark this day as…</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px">
+          <sc-for list="{{ kinds }}" as="k" hint-placeholder-count="4">
+            <div onClick="{{ k.pick }}" style="padding:8px 13px;border-radius:99px;background:{{ k.bg }};font-size:13px;color:{{ k.color }};box-shadow:{{ k.sh }};cursor:pointer;transition:transform .15s ease" style-hover="transform:translateY(-3px) scale(1.06)">{{ k.label }}</div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ showPlant }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:8px;margin-top:11px">
+            <input value="{{ memTitle }}" onChange="{{ onMemTitle }}" placeholder="name this memory…" style="flex:1;border:none;border-radius:14px;background:#FBE3E9;padding:10px 13px;font-family:'Mali',sans-serif;font-size:13.5px;color:#6E3448;outline:none"></input>
+            <div onClick="{{ plantMemory }}" style="padding:10px 16px;border-radius:99px;background:#D9435F;box-shadow:0 4px 0 rgba(140,46,68,.35);font-family:'Lilita One',cursive;font-size:13.5px;color:#FFF8F5;cursor:pointer;flex:none;transition:transform .15s ease" style-hover="transform:scale(1.08)">plant it 🌱</div>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex;justify-content:center;margin-top:2px">
+        <div onClick="{{ saveDayPage }}" style="padding:13px 34px;border-radius:99px;background:#D9435F;box-shadow:0 5px 0 rgba(140,46,68,.4),inset 0 -3px 0 rgba(0,0,0,.12);font-family:'Lilita One',cursive;font-size:16px;color:#FFF8F5;cursor:pointer;transition:transform .15s ease" style-hover="transform:translateY(-3px) scale(1.05)">tuck it in 💌</div>
       </div>
     </div>
   </div>
+  </sc-if>
+
+  <!-- ══════════ TOAST ══════════ -->
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:#6E3448;color:#FFF8F5;font-size:13.5px;padding:10px 20px;border-radius:99px;box-shadow:0 6px 16px rgba(70,20,35,.4);z-index:60;animation:dd-toast .25s ease;white-space:nowrap">{{ toast }}</div>
+  </sc-if>
+
+  <x-import component-from-global-scope="image-slot" from="./image-slot.js" style="display:none" hint-size="0px,0px"></x-import>
+  <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#D98BA3"/><g transform="translate(30,30)"><rect x="0" y="8" width="40" height="32" rx="8" fill="#FFF8F5"/><path d="M14 8 Q20 -4 26 8" fill="none" stroke="#D9435F" stroke-width="5" stroke-linecap="round"/><circle cx="20" cy="8" r="4" fill="#D9435F"/><circle cx="12" cy="24" r="3" fill="#6E3448"/><circle cx="28" cy="24" r="3" fill="#6E3448"/></g></svg></template>
 </div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;: {&quot;width&quot;: 430, &quot;height&quot;: 932}, &quot;weekStartsMonday&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;calendar&quot;}, &quot;showSparkles&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;companion&quot;}}">
+class Component extends DCLogic {
+  state = {
+    tab: 'today', monthOffset: 0,
+    profile: { name: 'Naira' }, companion: { name: 'Mochi', love_points: 0 },
+    days: {}, voiceNotes: [], memories: [], events: [],
+    openDate: null, draftMood: null, draftNote: '', kindPick: null, memTitle: '',
+    toast: null, bubble: 'you came back! my whiskers missed you 🖤',
+    recording: false,
+  };
 
-<!-- settings / cloud modal -->
-<div class="overlay" id="settingsOverlay">
-  <div class="modal">
-    <div class="bow-top">☁️</div>
-    <button class="close-x" id="closeSettingsBtn">✕</button>
-    <h3>cloud backup</h3>
-    <div class="sub" id="cloudStatusLine">everything currently lives safely on this device</div>
-    <div class="section" id="signinSection">
-      <div class="section-label">💌 sign in with your email</div>
-      <input type="email" id="emailBox" placeholder="you@example.com">
-      <div class="row"><button class="btn" id="signInBtn">send me a magic link ✨</button></div>
-      <div class="hint">no passwords — a sign-in link arrives in your email. once signed in, your diary, moods, memories and voice notes back up to your private cloud and sync to any device.</div>
-    </div>
-    <div class="section" id="signedinSection" style="display:none">
-      <div class="hint" id="whoLine"></div>
-      <div class="row">
-        <button class="btn ghost" id="syncNowBtn">sync now ☁️</button>
-        <button class="btn ghost" id="signOutBtn">sign out 🍃</button>
-      </div>
-    </div>
-    <div class="section" id="notConfiguredSection" style="display:none">
-      <div class="hint">cloud backup isn't set up yet — the Supabase keys in <b>config.js</b> are empty. your memories are still saved on this device. 🤍</div>
-    </div>
-  </div>
-</div>
+  async componentDidMount() {
+    const mod = await import('./api.js');
+    this.api = mod.api;
+    await this.refresh();
+  }
 
-<div class="toast" id="toast"></div>
+  async refresh() {
+    const [profile, companion, days, voiceNotes, memories, events] = await Promise.all([
+      this.api.getProfile(), this.api.getCompanion(), this.api.getDays(),
+      this.api.getAllVoiceNotes(), this.api.listMemories(), this.api.listEvents(),
+    ]);
+    this.setState({ profile, companion, days, voiceNotes, memories, events });
+  }
 
-<script src="storage.js"></script>
-<script src="app.js"></script>
+  iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  parse(s) { const p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+
+  showToast(msg) {
+    clearTimeout(this._toastT);
+    this.setState({ toast: msg });
+    this._toastT = setTimeout(() => this.setState({ toast: null }), 2400);
+  }
+
+  say(msg) { this.setState({ bubble: msg }); }
+
+  dayLabel(d) {
+    const wd = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const mo = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    return wd[d.getDay()] + ', ' + mo[d.getMonth()] + ' ' + d.getDate();
+  }
+
+  agoText(dateStr, today) {
+    const d = this.parse(dateStr);
+    const days = Math.round((today - d) / 86400000);
+    if (days <= 0) return 'today';
+    if (days < 30) return days === 1 ? 'yesterday' : days + ' days ago';
+    if (days < 365) { const m = Math.round(days / 30.4); return m === 1 ? 'one month ago' : m + ' months ago'; }
+    const y = Math.floor(days / 365.25);
+    return y === 1 ? 'one year ago' : (['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][y] || y) + ' years ago';
+  }
+
+  anniversaryText(today) {
+    const mm = today.getMonth(), dd = today.getDate();
+    for (const m of this.state.memories) {
+      const md = this.parse(m.date);
+      if (md.getMonth() === mm && md.getDate() === dd) {
+        const y = today.getFullYear() - md.getFullYear();
+        if (y > 0) {
+          const w = ['', 'one year', 'two years', 'three years', 'four years', 'five years'][y] || y + ' years';
+          return w + ' since ' + m.title + ' 🤍';
+        }
+      }
+    }
+    return null;
+  }
+
+  openDay(dateIso) {
+    const rec = this.state.days[dateIso] || {};
+    const mem = this.state.memories.find((m) => m.date === dateIso);
+    this.setState({ openDate: dateIso, draftMood: rec.mood || null, draftNote: rec.note || '', kindPick: mem ? mem.kind : null, memTitle: mem ? mem.title : '' });
+  }
+
+  async toggleRecord() {
+    if (this.state.recording) {
+      if (this._rec && this._rec.state !== 'inactive') this._rec.stop();
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const rec = new MediaRecorder(stream);
+      const chunks = [];
+      const started = Date.now();
+      rec.ondataavailable = (e) => chunks.push(e.data);
+      rec.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+        await this.api.addVoiceNote(this.state.openDate, blob, (Date.now() - started) / 1000);
+        this.setState({ recording: false });
+        await this.refresh();
+        this.showToast('tucked your little voice in 💌');
+      };
+      this._rec = rec;
+      rec.start();
+      this.setState({ recording: true });
+    } catch (e) {
+      this.showToast('the mic is shy right now 🤍');
+    }
+  }
+
+  renderVals() {
+    const S = this.state;
+    const today = new Date();
+    const todayIso = this.iso(today);
+    const hour = today.getHours();
+    const greetWord = hour < 12 ? 'good morning' : hour < 18 ? 'good afternoon' : 'good evening';
+    const firstName = (S.profile.name || 'naira').toLowerCase();
+
+    // companion
+    const pts = S.companion.love_points || 0;
+    const stage = pts >= 100 ? 4 : pts >= 50 ? 3 : pts >= 25 ? 2 : 1;
+    const stageNames = ['', 'tiny kitten', 'soft kitty', 'fluffy kitty', 'cloud kitty'];
+    const nextAt = [25, 25, 50, 100, 100][stage];
+    const loveHint = stage === 4 ? 'a whole cloud of love 🤍' : 'a little more love until ' + stageNames[stage + 1] + ' 🎀';
+
+    // moods
+    const moodMeta = [
+      ['lovely', '🥰', '#D9435F'], ['soft', '🌸', '#F09CB4'], ['okay', '☁️', '#C7B9CE'],
+      ['heavy', '🌧️', '#7E8FB5'], ['sleepy', '💤', '#E5C07B'],
+    ];
+    const dotFor = (mood) => { const m = moodMeta.find((x) => x[0] === mood); return m ? m[2] : 'transparent'; };
+    const todayMood = (S.days[todayIso] || {}).mood || null;
+    const bubbles = { lovely: 'a lovely heart day! i am purring so loud 🖤', soft: 'soft days are my favorite days 🌸', okay: 'an okay day is a perfectly good day ☁️', heavy: 'i will sit right here with you 🌧️🖤', sleepy: 'let us nap in a sunbeam together 💤' };
+    const moods = moodMeta.map(([label, emoji]) => ({
+      label, emoji,
+      bg: todayMood === label ? '#D9435F' : '#FBE3E9',
+      sh: todayMood === label ? '0 4px 0 rgba(140,46,68,.35), inset 0 -3px 0 rgba(0,0,0,.12)' : '0 4px 0 rgba(140,46,68,.2)',
+      pick: async () => {
+        await this.api.saveDay(todayIso, { mood: label });
+        await this.api.addLove(2);
+        this.say(bubbles[label]);
+        this.showToast('your heart is noted 🤍');
+        await this.refresh();
+      },
+    }));
+
+    // on this day
+    const ann = this.anniversaryText(today);
+
+    // plans
+    const plans = S.events.filter((e) => e.date >= todayIso).slice(0, 4).map((e) => {
+      const d = this.parse(e.date);
+      const wd = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'][d.getDay()];
+      const when = e.date === todayIso ? (e.time || 'today') : wd + ' ' + d.getDate() + (e.time ? ' · ' + e.time : '');
+      return { title: e.title, when };
+    });
+
+    // calendar
+    const view = new Date(today.getFullYear(), today.getMonth() + S.monthOffset, 1);
+    const mo = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    const monRule = !!this.props.weekStartsMonday;
+    const weekdays = monRule ? ['m', 't', 'w', 't', 'f', 's', 's'] : ['s', 'm', 't', 'w', 't', 'f', 's'];
+    const lead = (view.getDay() - (monRule ? 1 : 0) + 7) % 7;
+    const dim = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
+    const memMD = new Set(S.memories.map((m) => m.date.slice(5)));
+    const evDates = new Set(S.events.map((e) => e.date));
+    const cal = [];
+    for (let i = 0; i < lead; i++) cal.push({ blank: true, today: false, normal: false, d: '', mk: '', dot: '', open: null });
+    for (let d = 1; d <= dim; d++) {
+      const dateIso = this.iso(new Date(view.getFullYear(), view.getMonth(), d));
+      const rec = S.days[dateIso] || {};
+      let mk = '';
+      if (memMD.has(dateIso.slice(5))) mk += '🎀';
+      if (evDates.has(dateIso)) mk += '💌';
+      if (rec.note) mk += '📖';
+      cal.push({
+        blank: false, today: dateIso === todayIso, normal: dateIso !== todayIso,
+        d, mk, dot: dotFor(rec.mood),
+        open: () => this.openDay(dateIso),
+      });
+    }
+
+    // memories / garden
+    const kindIcons = { start: '🌱', end: '🍂', anniversary: '🎀', moment: '✨' };
+    const kindNames = { start: 'a start 🌱', end: 'an ending 🍂', anniversary: 'an anniversary 🎀', moment: 'a moment ✨' };
+    const memories = S.memories.map((m) => {
+      const d = this.parse(m.date);
+      const ago = this.agoText(m.date, today);
+      const hot = ago.indexOf('year') >= 0;
+      return {
+        icon: kindIcons[m.kind] || '✨', title: m.title,
+        dateLine: mo[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + ' · ' + (kindNames[m.kind] || ''),
+        ago, agoBg: hot ? '#D9435F' : '#FBE3E9', agoColor: hot ? '#FFF8F5' : '#8C5A6C',
+        open: () => { this.setState({ tab: 'days' }); this.openDay(m.date); },
+      };
+    });
+
+    // nav
+    const navs = [['today', '🌷', 'today'], ['days', '📖', 'days'], ['garden', '🌼', 'garden']].map(([key, icon, label]) => ({
+      icon, label,
+      bg: S.tab === key ? '#D9435F' : 'transparent',
+      color: S.tab === key ? '#FFF8F5' : '#8C5A6C',
+      sh: S.tab === key ? 'inset 0 -3px 0 rgba(0,0,0,.12)' : 'none',
+      go: () => this.setState({ tab: key, openDate: null }),
+    }));
+
+    // day page
+    const od = S.openDate;
+    const odDate = od ? this.parse(od) : null;
+    const daySub = od ? this.anniversaryText(odDate) : null;
+    const dayMoods = moodMeta.map(([label, emoji]) => ({
+      emoji,
+      bg: S.draftMood === label ? '#D9435F' : '#FBE3E9',
+      sh: S.draftMood === label ? '0 4px 0 rgba(140,46,68,.35), inset 0 -3px 0 rgba(0,0,0,.12)' : 'none',
+      op: S.draftMood && S.draftMood !== label ? '.6' : '1',
+      pick: () => this.setState({ draftMood: label }),
+    }));
+    const dayVoices = S.voiceNotes.filter((v) => v.date === od).map((v) => ({
+      durLabel: Math.floor(v.duration / 60) + ':' + String(v.duration % 60).padStart(2, '0'),
+      play: () => {
+        if (v.audio_url) { new Audio(v.audio_url).play(); }
+        else this.showToast('this little voice lives on the real backend 🤍');
+      },
+    }));
+    const kinds = ['start', 'end', 'anniversary', 'moment'].map((k) => ({
+      label: kindNames[k],
+      bg: S.kindPick === k ? '#D9435F' : '#FBE3E9',
+      color: S.kindPick === k ? '#FFF8F5' : '#8C5A6C',
+      sh: S.kindPick === k ? '0 3px 0 rgba(140,46,68,.35)' : 'none',
+      pick: () => this.setState({ kindPick: S.kindPick === k ? null : k }),
+    }));
+    const existingMem = od ? S.memories.find((m) => m.date === od) : null;
+
+    return {
+      sparkles: this.props.showSparkles ?? true,
+      greeting: greetWord + ', ' + firstName + ' 🌸',
+      dateLine: this.dayLabel(today) + ' · a soft new day',
+      bubble: S.bubble,
+      catName: S.companion.name || 'Mochi',
+      stageLine: stageNames[stage] + ' · stage ' + stage + ' of 4',
+      lovePct: Math.min(100, Math.round((pts / nextAt) * 100)) + '%',
+      loveHint,
+      renameCompanion: async () => {
+        const n = window.prompt('a new name for your companion?', S.companion.name);
+        if (n && n.trim()) { await this.api.setCompanionName(n.trim()); await this.refresh(); this.showToast('hello, ' + n.trim().toLowerCase() + ' 🖤'); }
+      },
+      hasOnThisDay: !!ann, onThisDay: ann || '',
+      openToday: () => this.openDay(todayIso),
+      moods, plans, noPlans: plans.length === 0,
+      tabToday: S.tab === 'today', tabDays: S.tab === 'days', tabGarden: S.tab === 'garden',
+      monthLabel: mo[view.getMonth()], yearLabel: String(view.getFullYear()),
+      prevMonth: () => this.setState({ monthOffset: S.monthOffset - 1 }),
+      nextMonth: () => this.setState({ monthOffset: S.monthOffset + 1 }),
+      weekdays, cal,
+      memories, noMemories: memories.length === 0,
+      navs,
+      dayOpen: !!od,
+      dayTitle: od ? this.dayLabel(odDate) : '',
+      hasDaySub: !!daySub, daySub: daySub ? '🎀 ' + daySub : '',
+      dayMoods,
+      dayNote: S.draftNote,
+      onNoteChange: (e) => this.setState({ draftNote: e.target.value }),
+      closeDay: () => this.setState({ openDate: null }),
+      saveDayPage: async () => {
+        await this.api.saveDay(od, { mood: S.draftMood, note: S.draftNote });
+        await this.api.addLove(S.draftNote ? 5 : 2);
+        this.say('a new page! i love page days 🖤');
+        this.showToast('keep this page 🤍');
+        this.setState({ openDate: null });
+        await this.refresh();
+      },
+      dayVoices, noVoices: dayVoices.length === 0,
+      recording: S.recording,
+      recBg: S.recording ? '#B93350' : '#D9435F',
+      recLabel: S.recording ? '◼ keep it' : '🎙️',
+      recAnim: S.recording ? 'dd-pulse 1.2s ease-in-out infinite' : 'none',
+      toggleRecord: () => this.toggleRecord(),
+      kinds,
+      showPlant: !!S.kindPick && !existingMem,
+      memTitle: S.memTitle,
+      onMemTitle: (e) => this.setState({ memTitle: e.target.value }),
+      plantMemory: async () => {
+        await this.api.addMemory(od, S.memTitle.trim() || 'a little memory', S.kindPick);
+        await this.api.addLove(4);
+        this.say('a new keepsake! i will guard it 🖤');
+        this.showToast('🌷 planted in the memory garden');
+        await this.refresh();
+      },
+      hasToast: !!S.toast, toast: S.toast || '',
+    };
+  }
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(function(){}); }
+</script>
 </body>
 </html>
