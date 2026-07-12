@@ -1,8 +1,7 @@
 /* Dear Days · service worker — offline app shell (v3, design build) */
-const CACHE = "dear-days-v3";
+const CACHE = "dear-days-v4";
 const ASSETS = [
-  "./", "./index.html", "./api.js", "./support.js", "./image-slot.js",
-  "./config.js", "./manifest.json", "./icon-192.png", "./icon-512.png",
+  "./", "./index.html", "./api.js", "./support.js", "./assets/mochi.png", "./config.js", "./manifest.json", "./icon-192.png", "./icon-512.png",
   "./vendor/react.min.js", "./vendor/react-dom.min.js", "./vendor/babel.min.js", "./vendor/supabase.min.js"
 ];
 

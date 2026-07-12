@@ -56,15 +56,12 @@ textarea{outline:none}
     <!-- companion card -->
     <div style="background:#FFF8F5;border-radius:26px;box-shadow:0 6px 0 rgba(140,46,68,.28);padding:16px 18px 14px;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.01);box-shadow:0 12px 0 rgba(140,46,68,.3)">
       <div style="display:flex;align-items:center;gap:14px">
-        <div style="position:relative;width:124px;height:124px;flex:none;animation:dd-float 3.6s ease-in-out infinite">
-          <image-slot id="mochi" shape="circle" style="width:124px;height:124px" placeholder="drop a 3d mochi render here 🖤"></image-slot>
-          <div style="position:absolute;top:-10px;right:2px;width:38px;height:20px;transform:rotate(14deg);pointer-events:none">
-            <div style="position:absolute;left:0;top:3px;width:16px;height:13px;border-radius:60% 40% 55% 45%;background:linear-gradient(135deg,#E25672,#C33552);transform:rotate(-18deg)"></div>
-            <div style="position:absolute;right:0;top:3px;width:16px;height:13px;border-radius:40% 60% 45% 55%;background:linear-gradient(225deg,#E25672,#C33552);transform:rotate(18deg)"></div>
-            <div style="position:absolute;left:14px;top:5px;width:10px;height:10px;border-radius:40%;background:#A82743"></div>
-          </div>
+        <div style="position:relative;width:128px;height:132px;flex:none;animation:dd-float 3.6s ease-in-out infinite">
+          <div style="position:absolute;left:14px;bottom:0;width:100px;height:16px;border-radius:50%;background:rgba(140,46,68,.3);filter:blur(6px)"></div>
+          <img src="assets/mochi.png" alt="mochi" style="position:relative;width:128px;height:128px;object-fit:contain;filter:drop-shadow(0 8px 10px rgba(70,20,35,.35));transition:transform .25s ease;transform-origin:50% 90%" style-hover="transform:scale(1.12) rotate(-4deg)"></img>
           <sc-if value="{{ sparkles }}" hint-placeholder-val="{{ true }}">
             <div style="position:absolute;left:-8px;top:4px;font-size:13px;animation:dd-spark 2.4s ease-in-out infinite;pointer-events:none">✨</div>
+            <div style="position:absolute;right:-4px;top:34px;font-size:11px;animation:dd-spark 3s ease-in-out infinite;pointer-events:none">✨</div>
           </sc-if>
         </div>
         <div style="flex:1;display:flex;flex-direction:column;gap:7px">
@@ -223,24 +220,13 @@ textarea{outline:none}
       </div>
 
       <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:14px 16px 16px">
-        <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448;margin-bottom:6px">dear diary…</div>
-        <textarea value="{{ dayNote }}" onChange="{{ onNoteChange }}" placeholder="today felt like…" style="width:100%;box-sizing:border-box;min-height:130px;border:none;resize:vertical;font-family:'Mali',sans-serif;font-size:14.5px;line-height:26px;color:#6E3448;background:repeating-linear-gradient(transparent 0 25px,rgba(217,67,95,.14) 25px 26px)"></textarea>
-      </div>
-
-      <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:14px 16px;display:flex;flex-direction:column;gap:9px">
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448">little voices</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448">dear diary…</div>
           <div onClick="{{ toggleRecord }}" style="min-width:44px;height:44px;padding:0 14px;border-radius:99px;background:{{ recBg }};box-shadow:0 4px 0 rgba(140,46,68,.35);display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;color:#FFF8F5;cursor:pointer;transition:transform .15s ease;animation:{{ recAnim }}" style-hover="transform:scale(1.1)">{{ recLabel }}</div>
         </div>
-        <sc-for list="{{ dayVoices }}" as="v" hint-placeholder-count="1">
-          <div style="display:flex;align-items:center;gap:10px;background:#FBE3E9;border-radius:16px;padding:9px 12px;transition:transform .15s ease" style-hover="transform:translateX(4px)">
-            <div onClick="{{ v.play }}" style="width:34px;height:34px;border-radius:50%;background:#FFF8F5;box-shadow:0 3px 0 rgba(140,46,68,.2);display:flex;align-items:center;justify-content:center;color:#D9435F;font-size:13px;flex:none;cursor:pointer;transition:transform .15s ease" style-hover="transform:scale(1.2)">▶</div>
-            <div style="flex:1;height:20px;border-radius:6px;background:repeating-linear-gradient(90deg,#E58BA2 0 3px,transparent 3px 7px)"></div>
-            <div style="font-size:12px;color:#B07285;flex:none">{{ v.durLabel }}</div>
-          </div>
-        </sc-for>
-        <sc-if value="{{ noVoices }}" hint-placeholder-val="{{ true }}">
-          <div style="font-size:12.5px;color:#B07285;text-align:center;padding:2px 0">no little voices on this day yet 🤍</div>
+        <textarea value="{{ dayNote }}" onChange="{{ onNoteChange }}" placeholder="today felt like… (or tap the mic and just talk)" style="width:100%;box-sizing:border-box;min-height:130px;border:none;resize:vertical;font-family:'Mali',sans-serif;font-size:14.5px;line-height:26px;color:#6E3448;background:repeating-linear-gradient(transparent 0 25px,rgba(217,67,95,.14) 25px 26px)"></textarea>
+        <sc-if value="{{ recording }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size:12px;color:#B93350;text-align:center;margin-top:4px">listening… your words will appear as you speak 🤍</div>
         </sc-if>
       </div>
 
@@ -271,7 +257,6 @@ textarea{outline:none}
     <div style="position:fixed;left:50%;transform:translateX(-50%);bottom:88px;background:#6E3448;color:#FFF8F5;font-size:13.5px;padding:10px 20px;border-radius:99px;box-shadow:0 6px 16px rgba(70,20,35,.4);z-index:60;animation:dd-toast .25s ease;white-space:nowrap">{{ toast }}</div>
   </sc-if>
 
-  <x-import component-from-global-scope="image-slot" from="./image-slot.js" style="display:none" hint-size="0px,0px"></x-import>
   <template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#D98BA3"/><g transform="translate(30,30)"><rect x="0" y="8" width="40" height="32" rx="8" fill="#FFF8F5"/><path d="M14 8 Q20 -4 26 8" fill="none" stroke="#D9435F" stroke-width="5" stroke-linecap="round"/><circle cx="20" cy="8" r="4" fill="#D9435F"/><circle cx="12" cy="24" r="3" fill="#6E3448"/><circle cx="28" cy="24" r="3" fill="#6E3448"/></g></svg></template>
 </div>
 </x-dc>
@@ -280,7 +265,7 @@ class Component extends DCLogic {
   state = {
     tab: 'today', monthOffset: 0,
     profile: { name: 'Naira' }, companion: { name: 'Mochi', love_points: 0 },
-    days: {}, voiceNotes: [], memories: [], events: [],
+    days: {}, memories: [], events: [],
     openDate: null, draftMood: null, draftNote: '', kindPick: null, memTitle: '',
     toast: null, bubble: 'you came back! my whiskers missed you 🖤',
     recording: false,
@@ -293,11 +278,11 @@ class Component extends DCLogic {
   }
 
   async refresh() {
-    const [profile, companion, days, voiceNotes, memories, events] = await Promise.all([
+    const [profile, companion, days, memories, events] = await Promise.all([
       this.api.getProfile(), this.api.getCompanion(), this.api.getDays(),
-      this.api.getAllVoiceNotes(), this.api.listMemories(), this.api.listEvents(),
+      this.api.listMemories(), this.api.listEvents(),
     ]);
-    this.setState({ profile, companion, days, voiceNotes, memories, events });
+    this.setState({ profile, companion, days, memories, events });
   }
 
   iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
@@ -348,31 +333,33 @@ class Component extends DCLogic {
     this.setState({ openDate: dateIso, draftMood: rec.mood || null, draftNote: rec.note || '', kindPick: mem ? mem.kind : null, memTitle: mem ? mem.title : '' });
   }
 
-  async toggleRecord() {
+  // Voice button: speech-to-text straight into the diary note.
+  // Uses the browser's SpeechRecognition; a real backend can swap this
+  // for its own transcription service without touching the UI.
+  toggleRecord() {
     if (this.state.recording) {
-      if (this._rec && this._rec.state !== 'inactive') this._rec.stop();
+      if (this._rec) this._rec.stop();
       return;
     }
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const rec = new MediaRecorder(stream);
-      const chunks = [];
-      const started = Date.now();
-      rec.ondataavailable = (e) => chunks.push(e.data);
-      rec.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop());
-        const blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
-        await this.api.addVoiceNote(this.state.openDate, blob, (Date.now() - started) / 1000);
-        this.setState({ recording: false });
-        await this.refresh();
-        this.showToast('tucked your little voice in 💌');
-      };
-      this._rec = rec;
-      rec.start();
-      this.setState({ recording: true });
-    } catch (e) {
-      this.showToast('the mic is shy right now 🤍');
-    }
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { this.showToast('the mic is shy in this browser 🤍'); return; }
+    const rec = new SR();
+    rec.continuous = true;
+    rec.interimResults = false;
+    rec.onresult = (e) => {
+      let text = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) text += e.results[i][0].transcript;
+      }
+      if (text.trim()) {
+        this.setState((s) => ({ draftNote: (s.draftNote ? s.draftNote.replace(/\s+$/, '') + ' ' : '') + text.trim() }));
+      }
+    };
+    rec.onerror = () => { this.setState({ recording: false }); this.showToast('the mic is shy right now 🤍'); };
+    rec.onend = () => { this._rec = null; this.setState({ recording: false }); };
+    this._rec = rec;
+    rec.start();
+    this.setState({ recording: true });
   }
 
   renderVals() {
@@ -482,13 +469,6 @@ class Component extends DCLogic {
       op: S.draftMood && S.draftMood !== label ? '.6' : '1',
       pick: () => this.setState({ draftMood: label }),
     }));
-    const dayVoices = S.voiceNotes.filter((v) => v.date === od).map((v) => ({
-      durLabel: Math.floor(v.duration / 60) + ':' + String(v.duration % 60).padStart(2, '0'),
-      play: () => {
-        if (v.audio_url) { new Audio(v.audio_url).play(); }
-        else this.showToast('this little voice lives on the real backend 🤍');
-      },
-    }));
     const kinds = ['start', 'end', 'anniversary', 'moment'].map((k) => ({
       label: kindNames[k],
       bg: S.kindPick === k ? '#D9435F' : '#FBE3E9',
@@ -536,10 +516,9 @@ class Component extends DCLogic {
         this.setState({ openDate: null });
         await this.refresh();
       },
-      dayVoices, noVoices: dayVoices.length === 0,
       recording: S.recording,
       recBg: S.recording ? '#B93350' : '#D9435F',
-      recLabel: S.recording ? '◼ keep it' : '🎙️',
+      recLabel: S.recording ? '◼ done' : '🎙️',
       recAnim: S.recording ? 'dd-pulse 1.2s ease-in-out infinite' : 'none',
       toggleRecord: () => this.toggleRecord(),
       kinds,
