@@ -538,6 +538,44 @@ class Component extends DCLogic {
 }
 </script>
 <script>
+/* ── mochi's opening moment: once per day, she walks in ── */
+(function(){
+  try{
+    var KEY = "dearDaysLastVisit";
+    var today = new Date().toISOString().slice(0,10);
+    if (localStorage.getItem(KEY) === today) return;
+    localStorage.setItem(KEY, today);
+    var wrap = document.createElement("div");
+    wrap.style.cssText = "position:fixed;inset:0;z-index:90;background:rgba(217,139,163,.96);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;transition:opacity .6s ease";
+    var card = document.createElement("div");
+    card.style.cssText = "width:min(92vw,430px);border-radius:26px;overflow:hidden;box-shadow:0 10px 0 rgba(140,46,68,.35);border:3px solid #FFF8F5;background:#000";
+    var vid = document.createElement("video");
+    vid.src = "Walking%20in%20the%20garden.mp4";
+    vid.muted = true; vid.autoplay = true; vid.playsInline = true;
+    vid.setAttribute("playsinline",""); vid.setAttribute("muted","");
+    vid.style.cssText = "width:100%;display:block";
+    var cap = document.createElement("div");
+    cap.style.cssText = "font-family:'Lilita One',cursive;color:#FFF8F5;font-size:17px;text-shadow:0 2px 0 rgba(140,46,68,.35)";
+    cap.textContent = "mochi was waiting for you \ud83e\udd0d";
+    var skip = document.createElement("div");
+    skip.style.cssText = "font-family:'Mali',sans-serif;color:#FBE3E9;font-size:12px";
+    skip.textContent = "tap anywhere to come in";
+    function dismiss(){
+      wrap.style.opacity = "0";
+      setTimeout(function(){ if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 650);
+    }
+    vid.addEventListener("ended", function(){ setTimeout(dismiss, 400); });
+    vid.addEventListener("error", dismiss);
+    wrap.addEventListener("click", dismiss);
+    setTimeout(dismiss, 14000);
+    card.appendChild(vid);
+    wrap.appendChild(card); wrap.appendChild(cap); wrap.appendChild(skip);
+    function mount(){ document.body.appendChild(wrap); vid.play().catch(function(){}); }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount); else mount();
+  }catch(e){}
+})();
+</script>
+<script>
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("sw.js").catch(function(){}); }
 </script>
 </body>
