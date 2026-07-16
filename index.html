@@ -306,6 +306,22 @@ class Component extends DCLogic {
   iso(d) { return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   parse(s) { const p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
 
+  playCare(events) {
+    const seq = (events || []).filter((e) => e.type !== 'mood' && e.type !== 'page');
+    if (!seq.length) return;
+    let i = 0;
+    const step = () => {
+      if (i >= seq.length) return;
+      const ev = seq[i++];
+      if (ev.type === 'fed') { this.say('*munch munch* you fed me by feeding your heart 🖤'); this.showToast('🍚 mochi has been fed'); }
+      else if (ev.type === 'treat') { this.say('A TREAT!! *spins* thank you thank you 🖤'); this.showToast('🐟 a treat — every 5 pages earns one!'); }
+      else if (ev.type === 'grew') { this.say('!!! look at me. all your little days made me BIGGER 🖤'); this.showToast('🎀 she grew into ' + (ev.toLabel || 'a new stage') + '!!'); }
+      else if (ev.type === 'memory') { this.say('a new keepsake! i will guard it 🖤'); }
+      setTimeout(step, 2000);
+    };
+    step();
+  }
+
   showToast(msg) {
     clearTimeout(this._toastT);
     this.setState({ toast: msg });
@@ -390,10 +406,10 @@ class Component extends DCLogic {
 
     // companion
     const pts = S.companion.love_points || 0;
-    const stage = pts >= 100 ? 4 : pts >= 50 ? 3 : pts >= 25 ? 2 : 1;
-    const stageNames = ['', 'tiny kitten', 'soft kitty', 'fluffy kitty', 'cloud kitty'];
-    const nextAt = [25, 25, 50, 100, 100][stage];
-    const loveHint = stage === 4 ? 'a whole cloud of love 🤍' : 'a little more love until ' + stageNames[stage + 1] + ' 🎀';
+    const stage = pts >= 280 ? 5 : pts >= 160 ? 4 : pts >= 80 ? 3 : pts >= 30 ? 2 : 1;
+    const stageNames = ['', 'baby mochi', 'little kitten', 'soft kitty', 'fluffy kitty', 'cloud cat'];
+    const nextAt = [30, 30, 80, 160, 280, 280][stage];
+    const loveHint = stage === 5 ? 'a whole cloud of love 🤍' : 'a little more love until ' + stageNames[stage + 1] + ' 🎀';
 
     // moods
     const moodMeta = [
@@ -408,11 +424,18 @@ class Component extends DCLogic {
       bg: todayMood === label ? '#D9435F' : '#FBE3E9',
       sh: todayMood === label ? '0 4px 0 rgba(140,46,68,.35), inset 0 -3px 0 rgba(0,0,0,.12)' : '0 4px 0 rgba(140,46,68,.2)',
       pick: async () => {
-        await this.api.saveDay(todayIso, { mood: label });
-        await this.api.addLove(2);
+        let careEvents = null;
+        if (this.api.completeDay) {
+          const r = await this.api.completeDay(todayIso, { mood: label });
+          careEvents = r.events;
+        } else {
+          await this.api.saveDay(todayIso, { mood: label });
+          await this.api.addLove(2);
+        }
         this.say(bubbles[label]);
         this.showToast('your heart is noted 🤍');
         await this.refresh();
+        if (careEvents) setTimeout(() => this.playCare(careEvents), 900);
       },
     }));
 
@@ -502,7 +525,7 @@ class Component extends DCLogic {
       dateLine: this.dayLabel(today) + ' · a soft new day',
       bubble: S.bubble,
       catName: S.companion.name || 'Mochi',
-      stageLine: stageNames[stage] + ' · stage ' + stage + ' of 4',
+      stageLine: stageNames[stage] + ' · stage ' + stage + ' of 5',
       lovePct: Math.min(100, Math.round((pts / nextAt) * 100)) + '%',
       loveHint,
       renameCompanion: async () => {
@@ -527,12 +550,19 @@ class Component extends DCLogic {
       onNoteChange: (e) => this.setState({ draftNote: e.target.value }),
       closeDay: () => this.setState({ openDate: null }),
       saveDayPage: async () => {
-        await this.api.saveDay(od, { mood: S.draftMood, note: S.draftNote });
-        await this.api.addLove(S.draftNote ? 5 : 2);
+        let careEvents = null;
+        if (this.api.completeDay) {
+          const r = await this.api.completeDay(od, { mood: S.draftMood, note: S.draftNote });
+          careEvents = r.events;
+        } else {
+          await this.api.saveDay(od, { mood: S.draftMood, note: S.draftNote });
+          await this.api.addLove(S.draftNote ? 5 : 2);
+        }
         this.say('a new page! i love page days 🖤');
         this.showToast('keep this page 🤍');
         this.setState({ openDate: null });
         await this.refresh();
+        if (careEvents) setTimeout(() => this.playCare(careEvents), 900);
       },
       recording: S.recording,
       recBg: S.recording ? '#B93350' : '#D9435F',
@@ -544,11 +574,18 @@ class Component extends DCLogic {
       memTitle: S.memTitle,
       onMemTitle: (e) => this.setState({ memTitle: e.target.value }),
       plantMemory: async () => {
-        await this.api.addMemory(od, S.memTitle.trim() || 'a little memory', S.kindPick);
-        await this.api.addLove(4);
+        let careEvents = null;
+        if (this.api.plantMemory) {
+          const r = await this.api.plantMemory(od, S.memTitle.trim() || 'a little memory', S.kindPick);
+          careEvents = r.events;
+        } else {
+          await this.api.addMemory(od, S.memTitle.trim() || 'a little memory', S.kindPick);
+          await this.api.addLove(4);
+        }
         this.say('a new keepsake! i will guard it 🖤');
         this.showToast('🌷 planted in the memory garden');
         await this.refresh();
+        if (careEvents) setTimeout(() => this.playCare(careEvents), 900);
       },
       hasToast: !!S.toast, toast: S.toast || '',
     };

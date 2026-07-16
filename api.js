@@ -10,9 +10,12 @@
 // of the design runtime).
 // ============================================================
 
+import { STAGES, POINTS, TREAT_EVERY, stageFor, nextStage, progressPct,
+         countDiaryEntries, evaluateDaySave, evaluateMemoryPlant, REACTIONS } from "./companion-logic.js";
+
 /* ---------- IndexedDB core ---------- */
 const DB_NAME = "dearDays";
-const DB_VER = 1;
+const DB_VER = 2;
 let _db = null;
 
 function idbOpen() {
@@ -21,7 +24,7 @@ function idbOpen() {
     const req = indexedDB.open(DB_NAME, DB_VER);
     req.onupgradeneeded = (e) => {
       const db = e.target.result;
-      for (const s of [["kv", "key"], ["days", "date"], ["memories", "id"], ["events", "id"], ["voice", "id"]]) {
+      for (const s of [["kv", "key"], ["days", "date"], ["memories", "id"], ["events", "id"], ["voice", "id"], ["care", "id"]]) {
         if (!db.objectStoreNames.contains(s[0])) db.createObjectStore(s[0], { keyPath: s[1] });
       }
     };
@@ -46,11 +49,12 @@ const idbGet = (store, key) => idbOpen().then((db) => new Promise((res, rej) => 
 /* ---------- in-memory mirror ---------- */
 const S = {
   profile: { key: "profile", name: "Naira", updated_at: 0, dirty: 0 },
-  companion: { key: "companion", name: "Mochi", love: 0, updated_at: 0, dirty: 0 },
+  companion: { key: "companion", name: "Mochi", love: 0, treats: 0, updated_at: 0, dirty: 0 },
   days: {},      // date -> {date, mood, note, updated_at, dirty}
   memories: [],  // {id, date, title, kind, updated_at, deleted, dirty}
   events: [],    // {id, date, time, title, updated_at, deleted, dirty}
   voice: [],     // meta only; blobs stay in IndexedDB
+  care: [],      // care ledger: {id, type, date, detail, created_at, dirty}
 };
 const now = () => Date.now();
 const uid = (p) => p + now().toString(36) + Math.random().toString(36).slice(2, 7);
@@ -70,6 +74,7 @@ function ensureLoaded() {
       const { blob, ...meta } = v;
       return meta;
     });
+    S.care = await idbAll("care");
     cloudInit();
   })();
   return _loaded;
@@ -101,6 +106,12 @@ async function ensureAudioUrl(v) {
     } catch (e) { /* offline — fine */ }
   }
   return null;
+}
+
+async function logCare(ev, date) {
+  const rec = { id: uid("c"), type: ev.type, date: date, detail: ev.to || (ev.n != null ? String(ev.n) : null), created_at: now(), dirty: 1 };
+  S.care.push(rec);
+  await idbPut("care", rec);
 }
 
 /* ============ THE CONTRACT ============ */
@@ -230,6 +241,78 @@ export const api = {
     e.deleted = 1; e.updated_at = now(); e.dirty = 1;
     await idbPut("events", e); syncSoon();
   },
+
+  /* ============ companion journey (growth · feeding · treats) ============ */
+
+  /* Everything the companion UI needs in one call. */
+  async getCompanionState() {
+    await ensureLoaded();
+    const pts = S.companion.love;
+    const stage = stageFor(pts);
+    const nxt = nextStage(pts);
+    return {
+      name: S.companion.name,
+      love_points: pts,
+      treats: S.companion.treats || 0,
+      entriesCount: countDiaryEntries(S.days),
+      stage,                                  // {key,label,min,size,asset,habits,index,count}
+      nextStage: nxt,                         // null at max
+      progressPct: progressPct(pts),
+      assetUrl: stage.asset,                  // UI: onerror -> fall back to assets/mochi.png
+      treatEvery: TREAT_EVERY,
+      reactions: REACTIONS,
+    };
+  },
+
+  /* Save a day AND get back the care events to animate, in order:
+     [{type:"mood"|"page"|"fed"|"treat"|"grew", ...}]              */
+  async completeDay(date, patch) {
+    await ensureLoaded();
+    const prev = { ...(S.days[date] || {}) };
+    const d = S.days[date] || { date, mood: null, note: "" };
+    Object.assign(d, patch);
+    d.updated_at = now(); d.dirty = 1;
+    S.days[date] = d;
+    await idbPut("days", d);
+    const entriesBefore = countDiaryEntries(S.days) - ((!prev.note || !prev.note.trim()) && d.note && d.note.trim() ? 1 : 0);
+    const r = evaluateDaySave({
+      prev, next: d,
+      entriesBefore,
+      treatsGiven: S.companion.treats || 0,
+      lovePoints: S.companion.love,
+    });
+    if (r.pointsDelta || r.treatsDelta) {
+      S.companion.love += r.pointsDelta;
+      S.companion.treats = (S.companion.treats || 0) + r.treatsDelta;
+      S.companion.updated_at = now(); S.companion.dirty = 1;
+      await idbPut("kv", S.companion);
+    }
+    for (const ev of r.events) await logCare(ev, date);
+    syncSoon();
+    return { day: { mood: d.mood, note: d.note }, events: r.events, state: await this.getCompanionState() };
+  },
+
+  /* Plant a memory AND get care events (memory / possible grew). */
+  async plantMemory(date, title, kind) {
+    await ensureLoaded();
+    const m = { id: uid("m"), date, title, kind, updated_at: now(), deleted: 0, dirty: 1 };
+    S.memories.push(m);
+    await idbPut("memories", m);
+    const r = evaluateMemoryPlant({ lovePoints: S.companion.love });
+    S.companion.love += r.pointsDelta;
+    S.companion.updated_at = now(); S.companion.dirty = 1;
+    await idbPut("kv", S.companion);
+    for (const ev of r.events) await logCare(ev, date);
+    syncSoon();
+    return { memory: { id: m.id, date, title, kind }, events: r.events, state: await this.getCompanionState() };
+  },
+
+  /* The scrapbook of care — lets the UI show "mochi's little life". */
+  async listCareEvents(limit) {
+    await ensureLoaded();
+    return S.care.slice().sort((a, b) => b.created_at - a.created_at).slice(0, limit || 50)
+      .map((c) => ({ id: c.id, type: c.type, date: c.date, detail: c.detail || null, created_at: new Date(c.created_at).toISOString() }));
+  },
 };
 
 function shapeVoice(v) {
@@ -281,7 +364,7 @@ async function pushDirty() {
     S.profile.dirty = 0; await idbPut("kv", S.profile);
   }
   if (S.companion.dirty) {
-    await sb.from("companion").upsert({ user_id: u, name: S.companion.name, love: S.companion.love, updated_at: S.companion.updated_at });
+    await sb.from("companion").upsert({ user_id: u, name: S.companion.name, love: S.companion.love, treats: S.companion.treats || 0, updated_at: S.companion.updated_at });
     S.companion.dirty = 0; await idbPut("kv", S.companion);
   }
   for (const k in S.days) {
@@ -301,6 +384,12 @@ async function pushDirty() {
     if (e.dirty) {
       await sb.from("events").upsert({ id: e.id, user_id: u, date: e.date, time: e.time, title: e.title, deleted: !!e.deleted, updated_at: e.updated_at });
       e.dirty = 0; await idbPut("events", e);
+    }
+  }
+  for (const c of S.care) {
+    if (c.dirty) {
+      await sb.from("care_events").upsert({ id: c.id, user_id: u, type: c.type, date: c.date, detail: c.detail, created_at: c.created_at });
+      c.dirty = 0; await idbPut("care", c);
     }
   }
   for (const v of S.voice) {
@@ -340,6 +429,7 @@ async function pullRemote() {
   const comp = await sb.from("companion").select("*").eq("user_id", u).maybeSingle();
   if (comp.data && tn(comp.data.updated_at) > S.companion.updated_at) {
     S.companion.name = comp.data.name; S.companion.love = comp.data.love;
+    S.companion.treats = comp.data.treats || 0;
     S.companion.updated_at = tn(comp.data.updated_at); S.companion.dirty = 0;
     await idbPut("kv", S.companion);
   }
@@ -371,6 +461,13 @@ async function pullRemote() {
     } else if (tn(r.updated_at) > loc.updated_at) {
       Object.assign(loc, { date: r.date, time: r.time, title: r.title, deleted: r.deleted ? 1 : 0, updated_at: tn(r.updated_at), dirty: 0 });
       await idbPut("events", loc);
+    }
+  }
+  const cares = await sb.from("care_events").select("*").eq("user_id", u);
+  for (const r of cares.data || []) {
+    if (!S.care.find((x) => x.id === r.id)) {
+      const c = { id: r.id, type: r.type, date: r.date, detail: r.detail, created_at: tn(r.created_at), dirty: 0 };
+      S.care.push(c); await idbPut("care", c);
     }
   }
   const vns = await sb.from("voice_notes").select("*").eq("user_id", u);
