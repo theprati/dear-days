@@ -13,6 +13,18 @@
 <meta name="apple-mobile-web-app-title" content="Dear Days">
 <script>
 /* serve the design runtime's CDN dependencies from local copies (offline/PWA) */
+/* Dear Days runs on Indian Standard Time everywhere, on every device */
+window.__IST = {
+  parts: function (d) {
+    var p = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Kolkata", year: "numeric", month: "numeric", day: "numeric", hour: "numeric", hour12: false, weekday: "short" }).formatToParts(d || new Date());
+    var g = function (t) { var f = p.find(function (x) { return x.type === t; }); return f ? f.value : ""; };
+    return { y: +g("year"), m: +g("month") - 1, d: +g("day"), hour: (+g("hour")) % 24 };
+  },
+  todayKey: function () {
+    var t = this.parts();
+    return t.y + "-" + String(t.m + 1).padStart(2, "0") + "-" + String(t.d).padStart(2, "0");
+  }
+};
 window.__resources = {
   "https://unpkg.com/react@18.3.1/umd/react.production.min.js": "./vendor/react.min.js",
   "https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js": "./vendor/react-dom.min.js",
@@ -22,6 +34,12 @@ window.__resources = {
 <script src="./vendor/supabase.min.js"></script>
 <script src="./config.js"></script>
 <script src="./support.js"></script>
+<style>
+[style*="cursor:pointer"]{-webkit-tap-highlight-color:rgba(217,67,95,.2);touch-action:manipulation}
+@media (hover:none){
+  [style*="cursor:pointer"]:active{transform:scale(.95)!important;filter:brightness(1.06);transition:transform .08s ease}
+}
+</style>
 </head>
 <body>
 <x-dc>
@@ -364,7 +382,7 @@ class Component extends DCLogic {
 
   renderVals() {
     const S = this.state;
-    const today = new Date();
+    const _ist = window.__IST.parts(); const today = new Date(_ist.y, _ist.m, _ist.d, _ist.hour);
     const todayIso = this.iso(today);
     const hour = today.getHours();
     const greetWord = hour < 12 ? 'good morning' : hour < 18 ? 'good afternoon' : 'good evening';
@@ -542,7 +560,7 @@ class Component extends DCLogic {
 (function(){
   try{
     var KEY = "dearDaysLastVisit";
-    var today = new Date().toISOString().slice(0,10);
+    var today = window.__IST.todayKey();
     if (localStorage.getItem(KEY) === today) return;
     localStorage.setItem(KEY, today);
     var wrap = document.createElement("div");
