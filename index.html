@@ -35,9 +35,9 @@ window.__resources = {
 <script src="./config.js"></script>
 <script src="./support.js"></script>
 <style>
-[style*="cursor:pointer"]{-webkit-tap-highlight-color:rgba(217,67,95,.2);touch-action:manipulation}
+[style*="cursor:pointer"],[style*="cursor: pointer"]{-webkit-tap-highlight-color:rgba(217,67,95,.2);touch-action:manipulation}
 @media (hover:none){
-  [style*="cursor:pointer"]:active{transform:scale(.95)!important;filter:brightness(1.06);transition:transform .08s ease}
+  [style*="cursor:pointer"]:active,[style*="cursor: pointer"]:active{transform:scale(.95)!important;filter:brightness(1.06);transition:transform .08s ease}
 }
 </style>
 </head>
@@ -109,7 +109,7 @@ textarea{outline:none}
 
     <!-- mood picker -->
     <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.28);padding:14px 16px">
-      <div style="font-family:'Lilita One',cursive;font-size:17px;color:#6E3448;margin-bottom:10px">how is your heart today?</div>
+      <div style="font-family:'Lilita One',cursive;font-size:17px;color:#6E3448;margin-bottom:10px">How is your heart today?</div>
       <div style="display:flex;gap:8px;justify-content:space-between">
         <sc-for list="{{ moods }}" as="m" hint-placeholder-count="5">
           <div onClick="{{ m.pick }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer">
@@ -121,11 +121,11 @@ textarea{outline:none}
     </div>
 
     <!-- write today's page -->
-    <div onClick="{{ openToday }}" style="background:#FFF8F5;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.28),inset 0 -4px 0 rgba(217,67,95,.12);padding:15px 0;text-align:center;font-family:'Lilita One',cursive;font-size:16px;color:#B93350;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.02);box-shadow:0 12px 0 rgba(140,46,68,.3),inset 0 -4px 0 rgba(217,67,95,.12)">write today's page 📖</div>
+    <div onClick="{{ openToday }}" style="background:#FFF8F5;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.28),inset 0 -4px 0 rgba(217,67,95,.12);padding:15px 0;text-align:center;font-family:'Lilita One',cursive;font-size:16px;color:#B93350;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.02);box-shadow:0 12px 0 rgba(140,46,68,.3),inset 0 -4px 0 rgba(217,67,95,.12)">Write today's page 📖</div>
 
     <!-- plans -->
     <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 6px 0 rgba(140,46,68,.28);padding:14px 16px;display:flex;flex-direction:column;gap:8px">
-      <div style="font-family:'Lilita One',cursive;font-size:17px;color:#6E3448">little plans</div>
+      <div style="font-family:'Lilita One',cursive;font-size:17px;color:#6E3448">Little plans</div>
       <sc-for list="{{ plans }}" as="p" hint-placeholder-count="2">
         <div style="display:flex;align-items:center;gap:10px;background:#FBE3E9;border-radius:14px;padding:9px 12px;transition:transform .15s ease" style-hover="transform:translateX(4px) scale(1.01)">
           <span style="font-size:16px">💌</span>
@@ -134,7 +134,7 @@ textarea{outline:none}
         </div>
       </sc-for>
       <sc-if value="{{ noPlans }}" hint-placeholder-val="{{ false }}">
-        <div style="font-size:13px;color:#B07285;text-align:center;padding:6px 0">nothing planned — a soft, open day 🤍</div>
+        <div style="font-size:13px;color:#B07285;text-align:center;padding:6px 0">Nothing planned. A soft, open day 🤍</div>
       </sc-if>
     </div>
   </div>
@@ -174,12 +174,12 @@ textarea{outline:none}
         </sc-if>
       </sc-for>
     </div>
-    <div style="background:rgba(255,248,245,.18);border-radius:16px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:12px;color:#FFF8F5">
-      <span>🎀 special day</span><span>💌 a plan</span><span>📖 a page</span><span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:#F09CB4;display:inline-block"></span>mood</span>
+    <div style="background:#FFF8F5;border-radius:16px;padding:10px 14px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;font-size:12.5px;font-weight:700;color:#6E3448;box-shadow:0 4px 0 rgba(140,46,68,.22)">
+      <span>🎀 Special day</span><span>💌 A plan</span><span>📖 A page</span><span style="display:flex;align-items:center;gap:4px"><span style="width:9px;height:9px;border-radius:50%;background:#D9435F;display:inline-block"></span>Mood</span>
     </div>
     <div style="background:#FFF8F5;border-radius:20px;box-shadow:0 5px 0 rgba(140,46,68,.25);padding:12px 16px;display:flex;gap:10px;align-items:center">
       <span style="font-size:20px">🌷</span>
-      <div style="font-size:13.5px;color:#6E3448;line-height:1.45">tap any little square to open its page — every day keeps its own memories 🤍</div>
+      <div style="font-size:13.5px;color:#6E3448;line-height:1.45">Tap any little square to open its page. Every day keeps its own memories 🤍</div>
     </div>
   </div>
   </sc-if>
@@ -188,8 +188,8 @@ textarea{outline:none}
   <sc-if value="{{ tabGarden }}" hint-placeholder-val="{{ false }}">
   <div data-screen-label="memory garden" style="position:relative;padding:28px 20px 130px;display:flex;flex-direction:column;gap:13px">
     <div>
-      <div style="font-family:'Lilita One',cursive;font-size:28px;color:#FFF8F5;text-shadow:0 2px 0 rgba(140,46,68,.35)">memory garden 🌷</div>
-      <div style="font-size:14px;color:#FBE3E9">every special day, pressed and kept</div>
+      <div style="font-family:'Lilita One',cursive;font-size:28px;color:#FFF8F5;text-shadow:0 2px 0 rgba(140,46,68,.35)">Memory garden 🌷</div>
+      <div style="font-size:14px;color:#FBE3E9">Every special day, pressed and kept</div>
     </div>
     <sc-for list="{{ memories }}" as="mem" hint-placeholder-count="4">
       <div onClick="{{ mem.open }}" style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:15px 16px;display:flex;gap:13px;align-items:center;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease" style-hover="transform:translateY(-4px) scale(1.02);box-shadow:0 11px 0 rgba(140,46,68,.3)">
@@ -202,7 +202,7 @@ textarea{outline:none}
       </div>
     </sc-for>
     <sc-if value="{{ noMemories }}" hint-placeholder-val="{{ false }}">
-      <div style="text-align:center;color:#FBE3E9;font-size:14px;padding:30px 0">no keepsakes yet — mark a special day and it will bloom here 🌱</div>
+      <div style="text-align:center;color:#FBE3E9;font-size:14px;padding:30px 0">No keepsakes yet. Mark a special day and it will bloom here 🌱</div>
     </sc-if>
   </div>
   </sc-if>
@@ -229,7 +229,7 @@ textarea{outline:none}
       </div>
 
       <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:12px 14px">
-        <div style="font-size:13px;color:#8C5A6C;margin-bottom:8px">mood of the day</div>
+        <div style="font-size:13px;color:#8C5A6C;margin-bottom:8px">Mood of the day</div>
         <div style="display:flex;gap:8px">
           <sc-for list="{{ dayMoods }}" as="m" hint-placeholder-count="5">
             <div onClick="{{ m.pick }}" style="width:46px;height:46px;border-radius:50%;background:{{ m.bg }};box-shadow:{{ m.sh }};display:flex;align-items:center;justify-content:center;font-size:22px;opacity:{{ m.op }};cursor:pointer;transition:transform .15s ease" style-hover="transform:translateY(-4px) scale(1.14)">{{ m.emoji }}</div>
@@ -239,17 +239,17 @@ textarea{outline:none}
 
       <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:14px 16px 16px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448">dear diary…</div>
+          <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448">Dear diary…</div>
           <div onClick="{{ toggleRecord }}" style="min-width:44px;height:44px;padding:0 14px;border-radius:99px;background:{{ recBg }};box-shadow:0 4px 0 rgba(140,46,68,.35);display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;color:#FFF8F5;cursor:pointer;transition:transform .15s ease;animation:{{ recAnim }}" style-hover="transform:scale(1.1)">{{ recLabel }}</div>
         </div>
-        <textarea value="{{ dayNote }}" onChange="{{ onNoteChange }}" placeholder="today felt like… (or tap the mic and just talk)" style="width:100%;box-sizing:border-box;min-height:130px;border:none;resize:vertical;font-family:'Mali',sans-serif;font-size:14.5px;line-height:26px;color:#6E3448;background:repeating-linear-gradient(transparent 0 25px,rgba(217,67,95,.14) 25px 26px)"></textarea>
+        <textarea value="{{ dayNote }}" onChange="{{ onNoteChange }}" placeholder="Today felt like… (or tap the mic and just talk)" style="width:100%;box-sizing:border-box;min-height:130px;border:none;resize:vertical;font-family:'Mali',sans-serif;font-size:14.5px;line-height:26px;color:#6E3448;background:repeating-linear-gradient(transparent 0 25px,rgba(217,67,95,.14) 25px 26px)"></textarea>
         <sc-if value="{{ recording }}" hint-placeholder-val="{{ false }}">
-          <div style="font-size:12px;color:#B93350;text-align:center;margin-top:4px">listening… your words will appear as you speak 🤍</div>
+          <div style="font-size:12px;color:#B93350;text-align:center;margin-top:4px">Listening… your words will appear as you speak 🤍</div>
         </sc-if>
       </div>
 
       <div style="background:#FFF8F5;border-radius:22px;box-shadow:0 5px 0 rgba(140,46,68,.28);padding:14px 16px">
-        <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448;margin-bottom:9px">mark this day as…</div>
+        <div style="font-family:'Lilita One',cursive;font-size:16px;color:#6E3448;margin-bottom:9px">Mark this day as…</div>
         <div style="display:flex;flex-wrap:wrap;gap:7px">
           <sc-for list="{{ kinds }}" as="k" hint-placeholder-count="4">
             <div onClick="{{ k.pick }}" style="padding:8px 13px;border-radius:99px;background:{{ k.bg }};font-size:13px;color:{{ k.color }};box-shadow:{{ k.sh }};cursor:pointer;transition:transform .15s ease" style-hover="transform:translateY(-3px) scale(1.06)">{{ k.label }}</div>
@@ -257,14 +257,14 @@ textarea{outline:none}
         </div>
         <sc-if value="{{ showPlant }}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;gap:8px;margin-top:11px">
-            <input value="{{ memTitle }}" onChange="{{ onMemTitle }}" placeholder="name this memory…" style="flex:1;border:none;border-radius:14px;background:#FBE3E9;padding:10px 13px;font-family:'Mali',sans-serif;font-size:13.5px;color:#6E3448;outline:none"></input>
-            <div onClick="{{ plantMemory }}" style="padding:10px 16px;border-radius:99px;background:#D9435F;box-shadow:0 4px 0 rgba(140,46,68,.35);font-family:'Lilita One',cursive;font-size:13.5px;color:#FFF8F5;cursor:pointer;flex:none;transition:transform .15s ease" style-hover="transform:scale(1.08)">plant it 🌱</div>
+            <input value="{{ memTitle }}" onChange="{{ onMemTitle }}" placeholder="Name this memory…" style="flex:1;border:none;border-radius:14px;background:#FBE3E9;padding:10px 13px;font-family:'Mali',sans-serif;font-size:13.5px;color:#6E3448;outline:none"></input>
+            <div onClick="{{ plantMemory }}" style="padding:10px 16px;border-radius:99px;background:#D9435F;box-shadow:0 4px 0 rgba(140,46,68,.35);font-family:'Lilita One',cursive;font-size:13.5px;color:#FFF8F5;cursor:pointer;flex:none;transition:transform .15s ease" style-hover="transform:scale(1.08)">Plant it 🌱</div>
           </div>
         </sc-if>
       </div>
 
       <div style="display:flex;justify-content:center;margin-top:2px">
-        <div onClick="{{ saveDayPage }}" style="padding:13px 34px;border-radius:99px;background:#D9435F;box-shadow:0 5px 0 rgba(140,46,68,.4),inset 0 -3px 0 rgba(0,0,0,.12);font-family:'Lilita One',cursive;font-size:16px;color:#FFF8F5;cursor:pointer;transition:transform .15s ease" style-hover="transform:translateY(-3px) scale(1.05)">tuck it in 💌</div>
+        <div onClick="{{ saveDayPage }}" style="padding:13px 34px;border-radius:99px;background:#D9435F;box-shadow:0 5px 0 rgba(140,46,68,.4),inset 0 -3px 0 rgba(0,0,0,.12);font-family:'Lilita One',cursive;font-size:16px;color:#FFF8F5;cursor:pointer;transition:transform .15s ease" style-hover="transform:translateY(-3px) scale(1.05)">Tuck it in 💌</div>
       </div>
     </div>
   </div>
@@ -285,7 +285,7 @@ class Component extends DCLogic {
     profile: { name: 'Naira' }, companion: { name: 'Mochi', love_points: 0 },
     days: {}, memories: [], events: [],
     openDate: null, draftMood: null, draftNote: '', kindPick: null, memTitle: '',
-    toast: null, bubble: 'you came back! my whiskers missed you 🖤',
+    toast: null, bubble: 'You came back! My whiskers missed you 🖤',
     recording: false,
   };
 
@@ -313,10 +313,10 @@ class Component extends DCLogic {
     const step = () => {
       if (i >= seq.length) return;
       const ev = seq[i++];
-      if (ev.type === 'fed') { this.say('*munch munch* you fed me by feeding your heart 🖤'); this.showToast('🍚 mochi has been fed'); }
-      else if (ev.type === 'treat') { this.say('A TREAT!! *spins* thank you thank you 🖤'); this.showToast('🐟 a treat — every 5 pages earns one!'); }
-      else if (ev.type === 'grew') { this.say('!!! look at me. all your little days made me BIGGER 🖤'); this.showToast('🎀 she grew into ' + (ev.toLabel || 'a new stage') + '!!'); }
-      else if (ev.type === 'memory') { this.say('a new keepsake! i will guard it 🖤'); }
+      if (ev.type === 'fed') { this.say('*munch munch* You fed me by feeding your heart 🖤'); this.showToast('🍚 Mochi has been fed'); }
+      else if (ev.type === 'treat') { this.say('A TREAT!! *spins* Thank you, thank you 🖤'); this.showToast('🐟 A treat! Every 5 pages earns one'); }
+      else if (ev.type === 'grew') { this.say('!!! Look at me. All your little days made me BIGGER 🖤'); this.showToast('🎀 She grew into ' + (ev.toLabel || 'a new stage') + '!!'); }
+      else if (ev.type === 'memory') { this.say('A new keepsake! I will guard it 🖤'); }
       setTimeout(step, 2000);
     };
     step();
@@ -331,19 +331,19 @@ class Component extends DCLogic {
   say(msg) { this.setState({ bubble: msg }); }
 
   dayLabel(d) {
-    const wd = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    const mo = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    const wd = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const mo = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     return wd[d.getDay()] + ', ' + mo[d.getMonth()] + ' ' + d.getDate();
   }
 
   agoText(dateStr, today) {
     const d = this.parse(dateStr);
     const days = Math.round((today - d) / 86400000);
-    if (days <= 0) return 'today';
-    if (days < 30) return days === 1 ? 'yesterday' : days + ' days ago';
-    if (days < 365) { const m = Math.round(days / 30.4); return m === 1 ? 'one month ago' : m + ' months ago'; }
+    if (days <= 0) return 'Today';
+    if (days < 30) return days === 1 ? 'Yesterday' : days + ' days ago';
+    if (days < 365) { const m = Math.round(days / 30.4); return m === 1 ? 'One month ago' : m + ' months ago'; }
     const y = Math.floor(days / 365.25);
-    return y === 1 ? 'one year ago' : (['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'][y] || y) + ' years ago';
+    return y === 1 ? 'One year ago' : (['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'][y] || y) + ' years ago';
   }
 
   anniversaryText(today) {
@@ -353,7 +353,7 @@ class Component extends DCLogic {
       if (md.getMonth() === mm && md.getDate() === dd) {
         const y = today.getFullYear() - md.getFullYear();
         if (y > 0) {
-          const w = ['', 'one year', 'two years', 'three years', 'four years', 'five years'][y] || y + ' years';
+          const w = ['', 'One year', 'Two years', 'Three years', 'Four years', 'Five years'][y] || y + ' years';
           return w + ' since ' + m.title + ' 🤍';
         }
       }
@@ -376,7 +376,7 @@ class Component extends DCLogic {
       return;
     }
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) { this.showToast('the mic is shy in this browser 🤍'); return; }
+    if (!SR) { this.showToast('The mic is shy in this browser 🤍'); return; }
     const rec = new SR();
     rec.continuous = true;
     rec.interimResults = false;
@@ -389,7 +389,7 @@ class Component extends DCLogic {
         this.setState((s) => ({ draftNote: (s.draftNote ? s.draftNote.replace(/\s+$/, '') + ' ' : '') + text.trim() }));
       }
     };
-    rec.onerror = () => { this.setState({ recording: false }); this.showToast('the mic is shy right now 🤍'); };
+    rec.onerror = () => { this.setState({ recording: false }); this.showToast('The mic is shy right now 🤍'); };
     rec.onend = () => { this._rec = null; this.setState({ recording: false }); };
     this._rec = rec;
     rec.start();
@@ -401,15 +401,15 @@ class Component extends DCLogic {
     const _ist = window.__IST.parts(); const today = new Date(_ist.y, _ist.m, _ist.d, _ist.hour);
     const todayIso = this.iso(today);
     const hour = today.getHours();
-    const greetWord = hour < 12 ? 'good morning' : hour < 18 ? 'good afternoon' : 'good evening';
-    const firstName = (S.profile.name || 'naira').toLowerCase();
+    const greetWord = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    const firstName = S.profile.name || 'Naira';
 
     // companion
     const pts = S.companion.love_points || 0;
     const stage = pts >= 280 ? 5 : pts >= 160 ? 4 : pts >= 80 ? 3 : pts >= 30 ? 2 : 1;
-    const stageNames = ['', 'baby mochi', 'little kitten', 'soft kitty', 'fluffy kitty', 'cloud cat'];
+    const stageNames = ['', 'Baby Mochi', 'Little kitten', 'Soft kitty', 'Fluffy kitty', 'Cloud cat'];
     const nextAt = [30, 30, 80, 160, 280, 280][stage];
-    const loveHint = stage === 5 ? 'a whole cloud of love 🤍' : 'a little more love until ' + stageNames[stage + 1] + ' 🎀';
+    const loveHint = stage === 5 ? 'A whole cloud of love 🤍' : 'A little more love until ' + stageNames[stage + 1] + ' 🎀';
 
     // moods
     const moodMeta = [
@@ -418,7 +418,7 @@ class Component extends DCLogic {
     ];
     const dotFor = (mood) => { const m = moodMeta.find((x) => x[0] === mood); return m ? m[2] : 'transparent'; };
     const todayMood = (S.days[todayIso] || {}).mood || null;
-    const bubbles = { lovely: 'a lovely heart day! i am purring so loud 🖤', soft: 'soft days are my favorite days 🌸', okay: 'an okay day is a perfectly good day ☁️', heavy: 'i will sit right here with you 🌧️🖤', sleepy: 'let us nap in a sunbeam together 💤' };
+    const bubbles = { lovely: 'A lovely heart day! I am purring so loud 🖤', soft: 'Soft days are my favorite days 🌸', okay: 'An okay day is a perfectly good day ☁️', heavy: 'I will sit right here with you 🌧️🖤', sleepy: 'Let us nap in a sunbeam together 💤' };
     const moods = moodMeta.map(([label, emoji]) => ({
       label, emoji,
       bg: todayMood === label ? '#D9435F' : '#FBE3E9',
@@ -433,7 +433,7 @@ class Component extends DCLogic {
           await this.api.addLove(2);
         }
         this.say(bubbles[label]);
-        this.showToast('your heart is noted 🤍');
+        this.showToast('Your heart is noted 🤍');
         await this.refresh();
         if (careEvents) setTimeout(() => this.playCare(careEvents), 900);
       },
@@ -452,9 +452,9 @@ class Component extends DCLogic {
 
     // calendar
     const view = new Date(today.getFullYear(), today.getMonth() + S.monthOffset, 1);
-    const mo = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
+    const mo = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
     const monRule = !!this.props.weekStartsMonday;
-    const weekdays = monRule ? ['m', 't', 'w', 't', 'f', 's', 's'] : ['s', 'm', 't', 'w', 't', 'f', 's'];
+    const weekdays = monRule ? ['M', 'T', 'W', 'T', 'F', 'S', 'S'] : ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     const lead = (view.getDay() - (monRule ? 1 : 0) + 7) % 7;
     const dim = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate();
     const memMD = new Set(S.memories.map((m) => m.date.slice(5)));
@@ -477,7 +477,7 @@ class Component extends DCLogic {
 
     // memories / garden
     const kindIcons = { start: '🌱', end: '🍂', anniversary: '🎀', moment: '✨' };
-    const kindNames = { start: 'a start 🌱', end: 'an ending 🍂', anniversary: 'an anniversary 🎀', moment: 'a moment ✨' };
+    const kindNames = { start: 'A start 🌱', end: 'An ending 🍂', anniversary: 'An anniversary 🎀', moment: 'A moment ✨' };
     const memories = S.memories.map((m) => {
       const d = this.parse(m.date);
       const ago = this.agoText(m.date, today);
@@ -491,7 +491,7 @@ class Component extends DCLogic {
     });
 
     // nav
-    const navs = [['today', '🌷', 'today'], ['days', '📖', 'days'], ['garden', '🌼', 'garden']].map(([key, icon, label]) => ({
+    const navs = [['today', '🌷', 'Today'], ['days', '📖', 'Days'], ['garden', '🌼', 'Garden']].map(([key, icon, label]) => ({
       icon, label,
       bg: S.tab === key ? '#D9435F' : 'transparent',
       color: S.tab === key ? '#FFF8F5' : '#8C5A6C',
@@ -522,15 +522,15 @@ class Component extends DCLogic {
     return {
       sparkles: this.props.showSparkles ?? true,
       greeting: greetWord + ', ' + firstName + ' 🌸',
-      dateLine: this.dayLabel(today) + ' · a soft new day',
+      dateLine: this.dayLabel(today) + ' · A soft new day',
       bubble: S.bubble,
       catName: S.companion.name || 'Mochi',
-      stageLine: stageNames[stage] + ' · stage ' + stage + ' of 5',
+      stageLine: stageNames[stage] + ' · Stage ' + stage + ' of 5',
       lovePct: Math.min(100, Math.round((pts / nextAt) * 100)) + '%',
       loveHint,
       renameCompanion: async () => {
-        const n = window.prompt('a new name for your companion?', S.companion.name);
-        if (n && n.trim()) { await this.api.setCompanionName(n.trim()); await this.refresh(); this.showToast('hello, ' + n.trim().toLowerCase() + ' 🖤'); }
+        const n = window.prompt('A new name for your companion?', S.companion.name);
+        if (n && n.trim()) { await this.api.setCompanionName(n.trim()); await this.refresh(); this.showToast('Hello, ' + n.trim() + ' 🖤'); }
       },
       hasOnThisDay: !!ann, onThisDay: ann || '',
       openToday: () => this.openDay(todayIso),
@@ -558,8 +558,8 @@ class Component extends DCLogic {
           await this.api.saveDay(od, { mood: S.draftMood, note: S.draftNote });
           await this.api.addLove(S.draftNote ? 5 : 2);
         }
-        this.say('a new page! i love page days 🖤');
-        this.showToast('keep this page 🤍');
+        this.say('A new page! I love page days 🖤');
+        this.showToast('Page kept safe 🤍');
         this.setState({ openDate: null });
         await this.refresh();
         if (careEvents) setTimeout(() => this.playCare(careEvents), 900);
@@ -582,8 +582,8 @@ class Component extends DCLogic {
           await this.api.addMemory(od, S.memTitle.trim() || 'a little memory', S.kindPick);
           await this.api.addLove(4);
         }
-        this.say('a new keepsake! i will guard it 🖤');
-        this.showToast('🌷 planted in the memory garden');
+        this.say('A new keepsake! I will guard it 🖤');
+        this.showToast('🌷 Planted in the memory garden');
         await this.refresh();
         if (careEvents) setTimeout(() => this.playCare(careEvents), 900);
       },
@@ -611,10 +611,10 @@ class Component extends DCLogic {
     var center = document.createElement("div");
     center.style.cssText = "position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:2;pointer-events:none";
     center.innerHTML = '<div style="font-size:34px;animation:ddIntroPulse 1.8s ease-in-out infinite">\ud83c\udf80</div>' +
-      '<div style="font-family:\'Lilita One\',cursive;color:#FFF8F5;font-size:22px;text-shadow:0 2px 10px rgba(26,10,16,.6);margin-top:6px">dear days</div>';
+      '<div style="font-family:\'Lilita One\',cursive;color:#FFF8F5;font-size:22px;text-shadow:0 2px 10px rgba(26,10,16,.6);margin-top:6px">Dear Days</div>';
     var cap = document.createElement("div");
     cap.style.cssText = "position:absolute;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom));text-align:center;z-index:2;pointer-events:none";
-    cap.innerHTML = '<div style="font-family:\'Mali\',sans-serif;color:#FBE3E9;font-size:13px;text-shadow:0 1px 6px rgba(26,10,16,.6)">tap to come in</div>';
+    cap.innerHTML = '<div style="font-family:\'Mali\',sans-serif;color:#FBE3E9;font-size:13px;text-shadow:0 1px 6px rgba(26,10,16,.6)">Tap to come in</div>';
     var st = document.createElement("style");
     st.textContent = "@keyframes ddIntroPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}";
     var raf = null;

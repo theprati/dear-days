@@ -16,27 +16,27 @@
    falls back to assets/mochi.png. */
 export const STAGES = [
   {
-    key: "sprout", label: "baby mochi", min: 0, size: 0.72,
+    key: "sprout", label: "Baby Mochi", min: 0, size: 0.72,
     asset: "assets/mochi-sprout.png",
     habits: { tailWag: "tiny flicks", naps: "constantly", spot: "curled in the corner of the companion card" },
   },
   {
-    key: "kitten", label: "little kitten", min: 30, size: 0.84,
+    key: "kitten", label: "Little kitten", min: 30, size: 0.84,
     asset: "assets/mochi-kitten.png",
     habits: { tailWag: "quick happy wags", naps: "often", spot: "chasing sparkles near the mood picker" },
   },
   {
-    key: "soft", label: "soft kitty", min: 80, size: 0.94,
+    key: "soft", label: "Soft kitty", min: 80, size: 0.94,
     asset: "assets/mochi-soft.png",
     habits: { tailWag: "slow content sways", naps: "afternoons", spot: "tail peeking from behind the calendar" },
   },
   {
-    key: "fluffy", label: "fluffy kitty", min: 160, size: 1.0,
+    key: "fluffy", label: "Fluffy kitty", min: 160, size: 1.0,
     asset: "assets/mochi-fluffy.png",
     habits: { tailWag: "grand swishes", naps: "in sunbeams", spot: "food bowl visible beside the today card" },
   },
   {
-    key: "cloud", label: "cloud cat", min: 280, size: 1.08,
+    key: "cloud", label: "Cloud cat", min: 280, size: 1.08,
     asset: "assets/mochi-cloud.png",
     habits: { tailWag: "levitating curl", naps: "on a tiny cloud", spot: "floating higher, faint sparkle trail" },
   },
@@ -145,10 +145,10 @@ export function evaluateMemoryPlant({ lovePoints }) {
 
 /* what Mochi says at each moment (UI picks randomly) */
 export const REACTIONS = {
-  mood:  ["noted in my little heart 💗", "whatever you feel is okay with me 🖤"],
-  page:  ["a new page! i love page days 🖤", "*presses it flat like a flower* kept."],
-  fed:   ["*munch munch* you fed me by feeding your heart 🖤", "a whole day, remembered. yum."],
-  treat: ["A TREAT!! *spins* thank you thank you 🖤", "*crunch* …i am saving half for you."],
-  grew:  ["!!! look at me. all your little days made me BIGGER 🖤", "i grew because you kept showing up 🎀"],
-  memory:["a new keepsake! i will guard it 🖤"],
+  mood:  ["Noted in my little heart 💗", "Whatever you feel is okay with me 🖤"],
+  page:  ["A new page! I love page days 🖤", "*presses it flat like a flower* Kept."],
+  fed:   ["*munch munch* You fed me by feeding your heart 🖤", "A whole day, remembered. Yum."],
+  treat: ["A TREAT!! *spins* Thank you, thank you 🖤", "*crunch* …I am saving half for you."],
+  grew:  ["!!! Look at me. All your little days made me BIGGER 🖤", "I grew because you kept showing up 🎀"],
+  memory:["A new keepsake! I will guard it 🖤"],
 };

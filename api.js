@@ -493,7 +493,7 @@ function setSyncState(st) {
   if (!ui) return;
   const map = { off: "🤍", signedout: "☁️", syncing: "☁️", synced: "☁️", error: "⛅" };
   ui.btn.textContent = map[st] || "☁️";
-  ui.btn.title = { off: "everything lives on this device", signedout: "tap to set up cloud backup", syncing: "syncing…", synced: "backed up to your cloud", error: "sync hiccup — tap to retry" }[st] || "";
+  ui.btn.title = { off: "Everything lives on this device", signedout: "Tap to set up cloud backup", syncing: "Syncing…", synced: "Backed up to your cloud", error: "Sync hiccup, tap to retry" }[st] || "";
   ui.btn.style.opacity = st === "synced" ? "1" : ".92";
   if (ui.panel.style.display !== "none") renderPanel();
 }
@@ -526,37 +526,37 @@ function buildCloudUI() {
 function renderPanel() {
   const p = ui.panel;
   p.innerHTML = "";
-  p.appendChild(el("div", "font-family:'Lilita One',cursive;font-size:17px;margin-bottom:4px", "cloud backup ☁️"));
+  p.appendChild(el("div", "font-family:'Lilita One',cursive;font-size:17px;margin-bottom:4px", "Cloud backup ☁️"));
   if (!cloudConfigured()) {
     p.appendChild(el("div", "font-size:13px;line-height:1.5;color:" + PALETTE.inkSoft,
-      "not set up yet — your diary still lives safely on this device 🤍"));
+      "Not set up yet. Your diary still lives safely on this device 🤍"));
     return;
   }
   if (sbUser) {
-    p.appendChild(el("div", "font-size:12.5px;line-height:1.5;color:" + PALETTE.inkSoft, "signed in as " + sbUser.email));
+    p.appendChild(el("div", "font-size:12.5px;line-height:1.5;color:" + PALETTE.inkSoft, "Signed in as " + sbUser.email));
     p.appendChild(el("div", "font-size:12.5px;margin:4px 0 10px;color:" + PALETTE.inkSoft,
-      { syncing: "syncing your memories…", synced: "everything is backed up 🤍", error: "sync hiccup — will retry" }[syncState] || ""));
+      { syncing: "Syncing your memories…", synced: "Everything is backed up 🤍", error: "Sync hiccup, will retry" }[syncState] || ""));
     const row = el("div", "display:flex;gap:8px");
-    const syncB = el("button", btnCss(true), "sync now");
+    const syncB = el("button", btnCss(true), "Sync now");
     syncB.onclick = () => syncNow();
-    const outB = el("button", btnCss(false), "sign out");
+    const outB = el("button", btnCss(false), "Sign out");
     outB.onclick = async () => { await sb.auth.signOut(); renderPanel(); };
     row.appendChild(syncB); row.appendChild(outB);
     p.appendChild(row);
     return;
   }
   p.appendChild(el("div", "font-size:12.5px;line-height:1.5;margin-bottom:8px;color:" + PALETTE.inkSoft,
-    "no passwords — a magic sign-in link arrives by email. once signed in, everything backs up to your private cloud."));
+    "No passwords. A magic sign-in link arrives by email. Once signed in, everything backs up to your private cloud."));
   const input = el("input", "width:100%;box-sizing:border-box;border:none;border-radius:12px;background:" + PALETTE.pinkSoft +
     ";padding:10px 12px;font-family:'Mali',sans-serif;font-size:13.5px;color:" + PALETTE.inkDeep + ";outline:none;margin-bottom:8px");
   input.type = "email"; input.placeholder = "you@example.com";
-  const send = el("button", btnCss(true), "send me a magic link ✨");
+  const send = el("button", btnCss(true), "Send me a magic link ✨");
   const msg = el("div", "font-size:12px;margin-top:8px;color:" + PALETTE.inkSoft, "");
   send.onclick = async () => {
     const email = (input.value || "").trim();
-    if (!email.includes("@")) { msg.textContent = "that email looks a little shy — try again 🤍"; return; }
+    if (!email.includes("@")) { msg.textContent = "That email looks a little shy, try again 🤍"; return; }
     const r = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname } });
-    msg.textContent = r.error ? "hmm: " + r.error.message : "✨ magic link sent — check your email!";
+    msg.textContent = r.error ? "Hmm: " + r.error.message : "✨ Magic link sent! Check your email";
   };
   p.appendChild(input); p.appendChild(send); p.appendChild(msg);
 }
