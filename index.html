@@ -593,39 +593,46 @@ class Component extends DCLogic {
 }
 </script>
 <script>
-/* ── mochi's opening moment: once per day, she walks in ── */
+/* ── mochi's cinematic intro: every open, full-screen story style ── */
 (function(){
   try{
-    var KEY = "dearDaysLastVisit";
-    var today = window.__IST.todayKey();
-    if (localStorage.getItem(KEY) === today) return;
-    localStorage.setItem(KEY, today);
     var wrap = document.createElement("div");
-    wrap.style.cssText = "position:fixed;inset:0;z-index:90;background:rgba(217,139,163,.96);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:20px;transition:opacity .6s ease";
-    var card = document.createElement("div");
-    card.style.cssText = "width:min(92vw,430px);border-radius:26px;overflow:hidden;box-shadow:0 10px 0 rgba(140,46,68,.35);border:3px solid #FFF8F5;background:#000";
+    wrap.style.cssText = "position:fixed;inset:0;z-index:90;background:#1a0a10;overflow:hidden;transition:opacity .7s ease";
     var vid = document.createElement("video");
     vid.src = "Walking%20in%20the%20garden.mp4";
     vid.muted = true; vid.autoplay = true; vid.playsInline = true;
     vid.setAttribute("playsinline",""); vid.setAttribute("muted","");
-    vid.style.cssText = "width:100%;display:block";
+    vid.style.cssText = "position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center";
+    var bar = document.createElement("div");
+    bar.style.cssText = "position:absolute;top:calc(10px + env(safe-area-inset-top));left:12px;right:12px;height:3px;border-radius:3px;background:rgba(255,248,245,.3);overflow:hidden;z-index:2";
+    var fill = document.createElement("div");
+    fill.style.cssText = "height:100%;width:0%;border-radius:3px;background:#FFF8F5";
+    bar.appendChild(fill);
+    var center = document.createElement("div");
+    center.style.cssText = "position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:2;pointer-events:none";
+    center.innerHTML = '<div style="font-size:34px;animation:ddIntroPulse 1.8s ease-in-out infinite">\ud83c\udf80</div>' +
+      '<div style="font-family:\'Lilita One\',cursive;color:#FFF8F5;font-size:22px;text-shadow:0 2px 10px rgba(26,10,16,.6);margin-top:6px">dear days</div>';
     var cap = document.createElement("div");
-    cap.style.cssText = "font-family:'Lilita One',cursive;color:#FFF8F5;font-size:17px;text-shadow:0 2px 0 rgba(140,46,68,.35)";
-    cap.textContent = "mochi was waiting for you \ud83e\udd0d";
-    var skip = document.createElement("div");
-    skip.style.cssText = "font-family:'Mali',sans-serif;color:#FBE3E9;font-size:12px";
-    skip.textContent = "tap anywhere to come in";
-    function dismiss(){
-      wrap.style.opacity = "0";
-      setTimeout(function(){ if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 650);
+    cap.style.cssText = "position:absolute;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom));text-align:center;z-index:2;pointer-events:none";
+    cap.innerHTML = '<div style="font-family:\'Mali\',sans-serif;color:#FBE3E9;font-size:13px;text-shadow:0 1px 6px rgba(26,10,16,.6)">tap to come in</div>';
+    var st = document.createElement("style");
+    st.textContent = "@keyframes ddIntroPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}";
+    var raf = null;
+    function tick(){
+      if (vid.duration) fill.style.width = Math.min(100, (vid.currentTime / vid.duration) * 100) + "%";
+      raf = requestAnimationFrame(tick);
     }
-    vid.addEventListener("ended", function(){ setTimeout(dismiss, 400); });
+    function dismiss(){
+      if (raf) cancelAnimationFrame(raf);
+      wrap.style.opacity = "0";
+      setTimeout(function(){ if (wrap.parentNode) wrap.parentNode.removeChild(wrap); }, 750);
+    }
+    vid.addEventListener("ended", function(){ setTimeout(dismiss, 300); });
     vid.addEventListener("error", dismiss);
     wrap.addEventListener("click", dismiss);
     setTimeout(dismiss, 14000);
-    card.appendChild(vid);
-    wrap.appendChild(card); wrap.appendChild(cap); wrap.appendChild(skip);
-    function mount(){ document.body.appendChild(wrap); vid.play().catch(function(){}); }
+    wrap.appendChild(vid); wrap.appendChild(bar); wrap.appendChild(center); wrap.appendChild(cap); wrap.appendChild(st);
+    function mount(){ document.body.appendChild(wrap); vid.play().catch(function(){}); tick(); }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount); else mount();
   }catch(e){}
 })();
