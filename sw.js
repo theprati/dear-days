@@ -1,5 +1,5 @@
 /* Dear Days · service worker — offline app shell (v3, design build) */
-const CACHE = "dear-days-v11";
+const CACHE = "dear-days-v12";
 const ASSETS = [
   "./", "./index.html", "./api.js", "./companion-logic.js", "./support.js", "./assets/mochi.png", "./config.js", "./manifest.json", "./icon-192.png", "./icon-512.png",
   "./vendor/react.min.js", "./vendor/react-dom.min.js", "./vendor/babel.min.js", "./vendor/supabase.min.js"
@@ -20,6 +20,7 @@ self.addEventListener("fetch", function(e){
   if(e.request.method !== "GET") return;
   const url = new URL(e.request.url);
   if(url.origin !== location.origin) return;  // Supabase/fonts pass through
+  if(e.request.headers.get("range") || /\.(mp4|webm|mov|m4a)$/i.test(url.pathname)) return;  // media loads natively
   e.respondWith(
     fetch(e.request).then(function(resp){
       const copy = resp.clone();

@@ -678,7 +678,7 @@ class Component extends DCLogic {
         }
         ctx.putImageData(img, 0, 0);
       }
-      raf = requestAnimationFrame(draw);
+      raf = setTimeout(function(){ requestAnimationFrame(draw); }, 45);
     }
     function mount(){ document.body.appendChild(vid); document.body.appendChild(canvas); }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount); else mount();
