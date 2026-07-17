@@ -640,23 +640,55 @@ class Component extends DCLogic {
 })();
 </script>
 <script>
-/* ── Grooming Mochi: purrs in the corner while the Memory Garden is open ── */
+/* ── Grooming Mochi: lives directly on the app's pink, white background keyed out ── */
 (function(){
   try{
     var vid = document.createElement("video");
     vid.src = "Grooming.mp4";
     vid.muted = true; vid.loop = true; vid.playsInline = true;
     vid.setAttribute("playsinline",""); vid.setAttribute("muted","");
-    vid.style.cssText = "position:fixed;left:12px;bottom:calc(88px + env(safe-area-inset-bottom));width:112px;height:112px;object-fit:cover;border-radius:50%;border:3px solid #FFF8F5;box-shadow:0 6px 0 rgba(140,46,68,.3);z-index:40;pointer-events:none;display:none;background:#FFF8F5";
-    function mount(){ document.body.appendChild(vid); }
+    vid.style.cssText = "position:fixed;left:-9999px;top:0;width:4px;height:4px;opacity:0;pointer-events:none";
+    var SIZE = 132;
+    var canvas = document.createElement("canvas");
+    canvas.width = SIZE * 2; canvas.height = SIZE * 2;
+    canvas.style.cssText = "position:fixed;left:max(10px, calc(50% - 205px));bottom:calc(84px + env(safe-area-inset-bottom));width:" + SIZE + "px;height:" + SIZE + "px;z-index:40;pointer-events:none;display:none;filter:drop-shadow(0 5px 5px rgba(140,46,68,.28))";
+    var ctx = canvas.getContext("2d", { willReadFrequently: true });
+    var useKey = !!ctx;
+    if (!useKey) {
+      canvas.style.cssText += ";border-radius:50%;background:#FFF8F5;border:3px solid #FFF8F5";
+    }
+    var raf = null;
+    function draw(){
+      if (canvas.style.display === "none") { raf = null; return; }
+      if (useKey && vid.readyState >= 2) {
+        var s = Math.min(vid.videoWidth, vid.videoHeight);
+        var sx = (vid.videoWidth - s) / 2, sy = (vid.videoHeight - s) / 2;
+        ctx.drawImage(vid, sx, sy, s, s, 0, 0, canvas.width, canvas.height);
+        var img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        var d = img.data;
+        for (var i = 0; i < d.length; i += 4) {
+          var r = d[i], g = d[i+1], b = d[i+2];
+          var mx = r > g ? (r > b ? r : b) : (g > b ? g : b);
+          var mn = r < g ? (r < b ? r : b) : (g < b ? g : b);
+          var lum = (r + g + b) / 3;
+          var sat = mx - mn;
+          if (sat < 28 && lum > 215) {
+            d[i+3] = lum >= 238 ? 0 : Math.max(0, Math.round((238 - lum) * 11));
+          }
+        }
+        ctx.putImageData(img, 0, 0);
+      }
+      raf = requestAnimationFrame(draw);
+    }
+    function mount(){ document.body.appendChild(vid); document.body.appendChild(canvas); }
     if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount); else mount();
     setInterval(function(){
       var onGarden = Array.prototype.some.call(document.querySelectorAll("div"), function(d){
         return d.childElementCount === 0 && d.textContent.trim() === "Every special day, pressed and kept" && !d.closest("x-dc");
       });
-      var showing = vid.style.display !== "none";
-      if (onGarden && !showing) { vid.style.display = "block"; vid.play().catch(function(){}); }
-      else if (!onGarden && showing) { vid.style.display = "none"; vid.pause(); }
+      var showing = canvas.style.display !== "none";
+      if (onGarden && !showing) { canvas.style.display = "block"; vid.play().catch(function(){}); if (!raf) raf = requestAnimationFrame(draw); }
+      else if (!onGarden && showing) { canvas.style.display = "none"; vid.pause(); }
     }, 700);
   }catch(e){}
 })();
