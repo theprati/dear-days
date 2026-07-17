@@ -661,7 +661,7 @@ class Component extends DCLogic {
     function draw(){
       if (canvas.style.display === "none") { raf = null; return; }
       if (useKey && vid.readyState >= 2) {
-        var s = Math.min(vid.videoWidth, vid.videoHeight);
+        var s = Math.min(vid.videoWidth, vid.videoHeight) * 0.88;
         var sx = (vid.videoWidth - s) / 2, sy = (vid.videoHeight - s) / 2;
         ctx.drawImage(vid, sx, sy, s, s, 0, 0, canvas.width, canvas.height);
         var img = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -672,8 +672,8 @@ class Component extends DCLogic {
           var mn = r < g ? (r < b ? r : b) : (g < b ? g : b);
           var lum = (r + g + b) / 3;
           var sat = mx - mn;
-          if (sat < 28 && lum > 215) {
-            d[i+3] = lum >= 238 ? 0 : Math.max(0, Math.round((238 - lum) * 11));
+          if (sat < 34 && lum > 160) {
+            d[i+3] = lum >= 200 ? 0 : Math.round(255 * (200 - lum) / 40);
           }
         }
         ctx.putImageData(img, 0, 0);
